@@ -34,3 +34,22 @@
     </ul>
   </div>
 </div>
+
+<h2>Login</h2>
+<%= if @maybe_user == nil do %>
+    <%= form_for @changeset, @action, fn f -> %>
+        <div class="form-group">
+            <%= label f, :email, class: "control-label" %>
+            <%= text_input f, :email, class: "form-control" %>
+            <%= error_tag f, :email %>
+        </div>
+
+        <div class="form-group">
+        <%=  submit "Submit", class: "btn btn-primary" %>
+        </div>
+    <% end %>
+<% else %>
+    <hi>Hi <%= @maybe_user.email %>!</hi>
+    <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
+<% end %>
+

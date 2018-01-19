@@ -17,3 +17,9 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
   * Docs: https://hexdocs.pm/phoenix
   * Mailing list: http://groups.google.com/group/phoenix-talk
   * Source: https://github.com/phoenixframework/phoenix
+  
+  
+## Dev notes
+I'm following along with https://medium.freecodecamp.org/authentication-using-elixir-phoenix-f9c162b2c398 to get
+oauth with google working
+

@@ -70,6 +70,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * updating authorization params, or passing up last_message_id information.
  * Successful joins receive an "ok" status, while unsuccessful joins
  * receive "error".
+
  *
  * ## Duplicate Join Subscriptions
  *
