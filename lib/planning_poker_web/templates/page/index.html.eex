@@ -1,55 +1,7 @@
-<div class="jumbotron">
-  <h2><%= gettext "Welcome to %{name}!", name: "Phoenix" %></h2>
-  <p class="lead">A productive web framework that<br />does not compromise speed and maintainability.</p>
-</div>
-
-<div class="row marketing">
-  <div class="col-lg-6">
-    <h4>Resources</h4>
-    <ul>
-      <li>
-        <a href="http://phoenixframework.org/docs/overview">Guides</a>
-      </li>
-      <li>
-        <a href="https://hexdocs.pm/phoenix">Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-    </ul>
-  </div>
-
-  <div class="col-lg-6">
-    <h4>Help</h4>
-    <ul>
-      <li>
-        <a href="http://groups.google.com/group/phoenix-talk">Mailing list</a>
-      </li>
-      <li>
-        <a href="http://webchat.freenode.net/?channels=elixir-lang">#elixir-lang on freenode IRC</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">@elixirphoenix</a>
-      </li>
-    </ul>
-  </div>
-</div>
-
-<h2>Login</h2>
 <%= if @maybe_user == nil do %>
-    <%= form_for @changeset, @action, fn f -> %>
-        <div class="form-group">
-            <%= label f, :email, class: "control-label" %>
-            <%= text_input f, :email, class: "form-control" %>
-            <%= error_tag f, :email %>
-        </div>
-
-        <div class="form-group">
-        <%=  submit "Submit", class: "btn btn-primary" %>
-        </div>
-    <% end %>
+    <span><%= link "Login with Google", to: auth_path(@conn, :request, "google") %></span>
 <% else %>
-    <hi>Hi <%= @maybe_user.email %>!</hi>
+    <h3>Hi <%= @maybe_user.email %>!</h3>
     <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
 <% end %>
 
