@@ -23,3 +23,5 @@ Ready to run in production? Please [check our deployment guides](http://www.phoe
 I'm following along with https://medium.freecodecamp.org/authentication-using-elixir-phoenix-f9c162b2c398 to get
 oauth with google working
 
+That first tutorial was writen assuming Guardian < 1.0, so I used https://medium.com/@tylerpachal/session-authentication-example-for-phoenix-1-3-using-guardian-1-0-beta-a228c78478e6 to get started with guardian itself.
+

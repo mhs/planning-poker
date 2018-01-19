@@ -22,15 +22,8 @@ defmodule PlanningPokerWeb.Router do
     plug JaSerializer.Deserializer
   end
 
-  pipeline :api_auth do
-    plug :accepts, ["json", "json-api"]
-    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
-    plug Guardian.Plug.LoadResource
-    plug JaSerializer.Deserializer
-  end
-
   scope "/api/v1", PlanningPokerWebApi do
-    pipe_through :api_auth
+    pipe_through [:api, :auth]
   end
 
   scope "/", PlanningPokerWeb do
@@ -53,7 +46,7 @@ defmodule PlanningPokerWeb.Router do
   end
 
   scope "/api/v1/auth", PlanningPokerWeb do
-    pipe_through :api
+    pipe_through :browser
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
