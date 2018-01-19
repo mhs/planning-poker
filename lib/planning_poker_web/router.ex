@@ -43,6 +43,7 @@ defmodule PlanningPokerWeb.Router do
     pipe_through [:browser, :auth, :ensure_auth] # Use the default browser stack
 
     resources "/games", GameController
+    resources "/rounds", RoundController
     get "/secret", PageController, :secret
   end
 
