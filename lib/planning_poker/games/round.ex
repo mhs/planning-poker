@@ -11,10 +11,15 @@ defmodule PlanningPoker.Games.Round do
     timestamps()
   end
 
+  def possible_status do
+    ["open", "closed"]
+  end
+
   @doc false
   def changeset(%Round{} = round, attrs) do
     round
-    |> cast(attrs, [:status])
-    |> validate_required([:status])
+    |> cast(attrs, [:game_id, :status])
+    |> validate_required([:game_id, :status])
+    |> validate_inclusion(:status, possible_status())
   end
 end

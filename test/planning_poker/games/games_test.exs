@@ -6,66 +6,6 @@ defmodule PlanningPoker.GamesTest do
   describe "games" do
     alias PlanningPoker.Games.Game
 
-    @valid_attrs %{status: "some status"}
-    @update_attrs %{status: "some updated status"}
-    @invalid_attrs %{status: nil}
-
-    def game_fixture(attrs \\ %{}) do
-      {:ok, game} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Games.create_game()
-
-      game
-    end
-
-    test "list_games/0 returns all games" do
-      game = game_fixture()
-      assert Games.list_games() == [game]
-    end
-
-    test "get_game!/1 returns the game with given id" do
-      game = game_fixture()
-      assert Games.get_game!(game.id) == game
-    end
-
-    test "create_game/1 with valid data creates a game" do
-      assert {:ok, %Game{} = game} = Games.create_game(@valid_attrs)
-      assert game.status == "some status"
-    end
-
-    test "create_game/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Games.create_game(@invalid_attrs)
-    end
-
-    test "update_game/2 with valid data updates the game" do
-      game = game_fixture()
-      assert {:ok, game} = Games.update_game(game, @update_attrs)
-      assert %Game{} = game
-      assert game.status == "some updated status"
-    end
-
-    test "update_game/2 with invalid data returns error changeset" do
-      game = game_fixture()
-      assert {:error, %Ecto.Changeset{}} = Games.update_game(game, @invalid_attrs)
-      assert game == Games.get_game!(game.id)
-    end
-
-    test "delete_game/1 deletes the game" do
-      game = game_fixture()
-      assert {:ok, %Game{}} = Games.delete_game(game)
-      assert_raise Ecto.NoResultsError, fn -> Games.get_game!(game.id) end
-    end
-
-    test "change_game/1 returns a game changeset" do
-      game = game_fixture()
-      assert %Ecto.Changeset{} = Games.change_game(game)
-    end
-  end
-
-  describe "games" do
-    alias PlanningPoker.Games.Game
-
     @valid_attrs %{name: "some name", status: "some status"}
     @update_attrs %{name: "some updated name", status: "some updated status"}
     @invalid_attrs %{name: nil, status: nil}
@@ -122,64 +62,6 @@ defmodule PlanningPoker.GamesTest do
     test "change_game/1 returns a game changeset" do
       game = game_fixture()
       assert %Ecto.Changeset{} = Games.change_game(game)
-    end
-  end
-
-  describe "rounds" do
-    alias PlanningPoker.Games.Round
-
-    @valid_attrs %{}
-    @update_attrs %{}
-    @invalid_attrs %{}
-
-    def round_fixture(attrs \\ %{}) do
-      {:ok, round} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Games.create_round()
-
-      round
-    end
-
-    test "list_rounds/0 returns all rounds" do
-      round = round_fixture()
-      assert Games.list_rounds() == [round]
-    end
-
-    test "get_round!/1 returns the round with given id" do
-      round = round_fixture()
-      assert Games.get_round!(round.id) == round
-    end
-
-    test "create_round/1 with valid data creates a round" do
-      assert {:ok, %Round{} = round} = Games.create_round(@valid_attrs)
-    end
-
-    test "create_round/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Games.create_round(@invalid_attrs)
-    end
-
-    test "update_round/2 with valid data updates the round" do
-      round = round_fixture()
-      assert {:ok, round} = Games.update_round(round, @update_attrs)
-      assert %Round{} = round
-    end
-
-    test "update_round/2 with invalid data returns error changeset" do
-      round = round_fixture()
-      assert {:error, %Ecto.Changeset{}} = Games.update_round(round, @invalid_attrs)
-      assert round == Games.get_round!(round.id)
-    end
-
-    test "delete_round/1 deletes the round" do
-      round = round_fixture()
-      assert {:ok, %Round{}} = Games.delete_round(round)
-      assert_raise Ecto.NoResultsError, fn -> Games.get_round!(round.id) end
-    end
-
-    test "change_round/1 returns a round changeset" do
-      round = round_fixture()
-      assert %Ecto.Changeset{} = Games.change_round(round)
     end
   end
 
@@ -304,7 +186,7 @@ defmodule PlanningPoker.GamesTest do
   end
 
   describe "players" do
-    alias PlanningPoker.Games.Player
+    alias PlanningPoker.Games.GamePlayer
 
     @valid_attrs %{}
     @update_attrs %{}
@@ -330,7 +212,7 @@ defmodule PlanningPoker.GamesTest do
     end
 
     test "create_player/1 with valid data creates a player" do
-      assert {:ok, %Player{} = player} = Games.create_player(@valid_attrs)
+      assert {:ok, %GamePlayer{} = player} = Games.create_player(@valid_attrs)
     end
 
     test "create_player/1 with invalid data returns error changeset" do
@@ -340,7 +222,7 @@ defmodule PlanningPoker.GamesTest do
     test "update_player/2 with valid data updates the player" do
       player = player_fixture()
       assert {:ok, player} = Games.update_player(player, @update_attrs)
-      assert %Player{} = player
+      assert %GamePlayer{} = player
     end
 
     test "update_player/2 with invalid data returns error changeset" do
@@ -351,7 +233,7 @@ defmodule PlanningPoker.GamesTest do
 
     test "delete_player/1 deletes the player" do
       player = player_fixture()
-      assert {:ok, %Player{}} = Games.delete_player(player)
+      assert {:ok, %GamePlayer{}} = Games.delete_player(player)
       assert_raise Ecto.NoResultsError, fn -> Games.get_player!(player.id) end
     end
 

@@ -9,4 +9,10 @@ defmodule PlanningPoker.Accounts.Pipeline do
   plug Guardian.Plug.VerifyHeader, claims: %{"typ" => "access"}
   # Load the user if either of the verifications worked
   plug Guardian.Plug.LoadResource, allow_blank: true
+
+  def log(conn, s) do
+    IO.puts "----- Plug log: #{s}"
+    IO.inspect conn
+    conn
+  end
 end

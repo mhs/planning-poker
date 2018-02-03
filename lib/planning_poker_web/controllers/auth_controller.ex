@@ -37,10 +37,10 @@ defmodule PlanningPokerWeb.AuthController do
     end
   end
 
-  def sign_in_user(conn, %{"user" => user}) do
+  def sign_in_user(conn, %{"user" => oauth_user}) do
     # try to get exactly one user from the db whose email matches
     # that of the login request
-    user = PlanningPoker.Accounts.user_by_email(user.email)
+    user = PlanningPoker.Accounts.user_by_email(oauth_user.email)
 
     if user do
       IO.puts "found user"
@@ -58,7 +58,7 @@ defmodule PlanningPokerWeb.AuthController do
           |> render(PlanningPokerWeb.ErrorView, "401.json-api")
       end
     else
-      sign_up_user(conn, %{"user" => user})
+      sign_up_user(conn, %{"user" => oauth_user})
     end
   end
 

@@ -14,5 +14,21 @@
 
 </ul>
 
+<h2>People in this game</h2>
+<ul>
+    <%= for player <- @players do %>
+    <li>
+        <%= player.first_name %> <%=  player.last_name %>
+    </li>
+
+    <% end %>
+</ul>
+
+<%= if @current_round == nil do %>
+    <span><%= link "Start new round", to: game_new_round_path(@conn, :new_round, @game), method: :post %></span>
+<% else %>
+    <span>The current round is <%= @current_round.id %></span>
+<% end %>
+
 <span><%= link "Edit", to: game_path(@conn, :edit, @game) %></span>
 <span><%= link "Back", to: game_path(@conn, :index) %></span>

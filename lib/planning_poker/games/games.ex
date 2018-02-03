@@ -7,6 +7,7 @@ defmodule PlanningPoker.Games do
   alias PlanningPoker.Repo
 
   alias PlanningPoker.Games.Game
+  alias PlanningPoker.Accounts.User
 
   @doc """
   Returns the list of games.
@@ -104,6 +105,13 @@ defmodule PlanningPoker.Games do
 
   alias PlanningPoker.Games.Round
 
+  def current_round(game) do
+    query = from r in Ecto.assoc(game, :rounds),
+      where: r.status == "open",
+      order_by: r.inserted_at
+    Repo.one(query)
+  end
+
   @doc """
   Returns the list of rounds.
 
@@ -146,6 +154,8 @@ defmodule PlanningPoker.Games do
 
   """
   def create_round(attrs \\ %{}) do
+    IO.puts "creating round with attrs"
+    IO.inspect attrs
     %Round{}
     |> Round.changeset(attrs)
     |> Repo.insert()
@@ -294,7 +304,7 @@ defmodule PlanningPoker.Games do
     Estimate.changeset(estimate, %{})
   end
 
-  alias PlanningPoker.Games.Player
+  alias PlanningPoker.Games.GamePlayer
 
   @doc """
   Returns the list of players.
@@ -302,28 +312,28 @@ defmodule PlanningPoker.Games do
   ## Examples
 
       iex> list_players()
-      [%Player{}, ...]
+      [%GamePlayer{}, ...]
 
   """
   def list_players do
-    Repo.all(Player)
+    Repo.all(GamePlayer)
   end
 
   @doc """
   Gets a single player.
 
-  Raises `Ecto.NoResultsError` if the Player does not exist.
+  Raises `Ecto.NoResultsError` if the GamePlayer does not exist.
 
   ## Examples
 
       iex> get_player!(123)
-      %Player{}
+      %GamePlayer{}
 
       iex> get_player!(456)
       ** (Ecto.NoResultsError)
 
   """
-  def get_player!(id), do: Repo.get!(Player, id)
+  def get_player!(id), do: Repo.get!(GamePlayer, id)
 
   @doc """
   Creates a player.
@@ -331,15 +341,15 @@ defmodule PlanningPoker.Games do
   ## Examples
 
       iex> create_player(%{field: value})
-      {:ok, %Player{}}
+      {:ok, %GamePlayer{}}
 
       iex> create_player(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
   def create_player(attrs \\ %{}) do
-    %Player{}
-    |> Player.changeset(attrs)
+    %GamePlayer{}
+    |> GamePlayer.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -349,31 +359,31 @@ defmodule PlanningPoker.Games do
   ## Examples
 
       iex> update_player(player, %{field: new_value})
-      {:ok, %Player{}}
+      {:ok, %GamePlayer{}}
 
       iex> update_player(player, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_player(%Player{} = player, attrs) do
+  def update_player(%GamePlayer{} = player, attrs) do
     player
-    |> Player.changeset(attrs)
+    |> GamePlayer.changeset(attrs)
     |> Repo.update()
   end
 
   @doc """
-  Deletes a Player.
+  Deletes a GamePlayer.
 
   ## Examples
 
       iex> delete_player(player)
-      {:ok, %Player{}}
+      {:ok, %GamePlayer{}}
 
       iex> delete_player(player)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_player(%Player{} = player) do
+  def delete_player(%GamePlayer{} = player) do
     Repo.delete(player)
   end
 
@@ -383,10 +393,23 @@ defmodule PlanningPoker.Games do
   ## Examples
 
       iex> change_player(player)
-      %Ecto.Changeset{source: %Player{}}
+      %Ecto.Changeset{source: %GamePlayer{}}
 
   """
-  def change_player(%Player{} = player) do
-    Player.changeset(player, %{})
+  def change_player(%GamePlayer{} = player) do
+    GamePlayer.changeset(player, %{})
+  end
+
+  def get_players(%Game{id: id}), do: get_players(id)
+  def get_players(game_id) do
+    Repo.get!(Game, game_id)
+    |> Ecto.assoc(:players)
+    |> Repo.all
+  end
+
+  def join_game(game_id, user_id) do
+    Repo.get!(Game, game_id)
+    |> Ecto.build_assoc(:game_players, user_id: user_id)
+    |> Repo.insert()
   end
 end

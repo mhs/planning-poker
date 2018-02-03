@@ -23,6 +23,19 @@ defmodule PlanningPokerWeb.ConnCase do
 
       # The default endpoint for testing
       @endpoint PlanningPokerWeb.Endpoint
+
+      def guardian_login() do
+        {:ok, user} = PlanningPoker.Repo.insert %PlanningPoker.Accounts.User{id: 1}
+        guardian_login(user)
+      end
+      def guardian_login(user, token \\ :token, opts \\ []) do
+        build_conn()
+        |> bypass_through(PlanningPokerWeb.Router, [:browser])
+        |> get("/")
+        |> PlanningPoker.Guardian.Plug.sign_in(user)
+        |> send_resp(200, "Flush the session yo")
+        |> recycle()
+      end
     end
   end
 
@@ -32,7 +45,33 @@ defmodule PlanningPokerWeb.ConnCase do
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(PlanningPoker.Repo, {:shared, self()})
     end
-    {:ok, conn: Phoenix.ConnTest.build_conn()}
+
+    conn = Phoenix.ConnTest.build_conn()
+
+    if tags[:authenticated] do
+      {:ok, test_user} = PlanningPoker.Repo.insert(%PlanningPoker.Accounts.User{id: 1})
+      auth_conn = guardian_login(conn, test_user)
+      {:ok, conn: auth_conn, user: test_user}
+    else
+      {:ok, conn: conn}
+    end
+  end
+
+  def guardian_login(conn) do
+    {:ok, user} = PlanningPoker.Repo.insert %PlanningPoker.Accounts.User{id: 1}
+    guardian_login(user)
+  end
+
+  @endpoint PlanningPokerWeb.Endpoint
+
+  def guardian_login(conn, user) do
+    use Phoenix.ConnTest
+    conn
+    |> bypass_through(PlanningPokerWeb.Router, [:browser])
+    |> get("/")
+    |> PlanningPoker.Guardian.Plug.sign_in(user)
+    |> send_resp(200, "Flush the session yo")
+    |> recycle()
   end
 
 end

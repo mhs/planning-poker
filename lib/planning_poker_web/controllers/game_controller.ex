@@ -2,7 +2,7 @@ defmodule PlanningPokerWeb.GameController do
   use PlanningPokerWeb, :controller
 
   alias PlanningPoker.Games
-  alias PlanningPoker.Games.Game
+  alias PlanningPoker.Games.{Game, Round}
 
   def index(conn, _params) do
     games = Games.list_games()
@@ -10,7 +10,7 @@ defmodule PlanningPokerWeb.GameController do
   end
 
   def new(conn, _params) do
-    changeset = Games.change_game(%Game{})
+    changeset = Games.change_game(%Game{status: "open"})
     render(conn, "new.html", changeset: changeset)
   end
 
@@ -25,14 +25,44 @@ defmodule PlanningPokerWeb.GameController do
     end
   end
 
+  def new_round(conn, %{"game_id" => game_id}) do
+    case Games.create_round(%{game_id: game_id, status: "open"}) do
+      {:ok, round} ->
+        conn
+        |> put_flash(:info, "Round created successfully.")
+        |> redirect(to: game_path(conn, :show, game_id))
+      {:error, %Ecto.Changeset{} = changeset} ->
+        conn
+        |> redirect(to: game_path(conn, :show, game_id))
+    end
+  end
+
+  def join(conn, %{"game_id" => game_id}) do
+    current_user = Guardian.Plug.current_resource(conn)
+    case Games.join_game(game_id, current_user) do
+      {:ok, _player} ->
+        conn
+        |> put_flash(:info, "You have joined the game")
+        |> redirect(to: game_path(conn, :show, game_id))
+      {:error, error_msg} ->
+        conn
+        |> put_flash(:error, error_msg)
+        |> redirect(to: game_path(conn, :show, game_id))
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     game = Games.get_game!(id)
-    render(conn, "show.html", game: game)
+    current_round = Games.current_round(game)
+    players = Games.get_players(game)
+    render(conn, "show.html", game: game, current_round: current_round, players: players)
   end
 
   def edit(conn, %{"id" => id}) do
     game = Games.get_game!(id)
     changeset = Games.change_game(game)
+    conn
+    |> put_flash(:info, "You have joined the game")
     render(conn, "edit.html", game: game, changeset: changeset)
   end
 

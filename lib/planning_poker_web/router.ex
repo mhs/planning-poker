@@ -42,7 +42,9 @@ defmodule PlanningPokerWeb.Router do
   scope "/", PlanningPokerWeb do
     pipe_through [:browser, :auth, :ensure_auth] # Use the default browser stack
 
-    resources "/games", GameController
+    resources "/games", GameController do
+      post "/new_round", GameController, :new_round, as: :new_round
+    end
     resources "/rounds", RoundController
     get "/secret", PageController, :secret
   end
@@ -53,6 +55,12 @@ defmodule PlanningPokerWeb.Router do
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
     post "/:provider/callback", AuthController, :callback
+  end
+
+  def log(conn, s) do
+    IO.puts "---plug #{s}"
+    IO.inspect conn
+    conn
   end
 
   # Other scopes may use custom stacks.

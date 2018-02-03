@@ -1,14 +1,20 @@
 defmodule PlanningPoker.Games.Game do
   use Ecto.Schema
   import Ecto.Changeset
-  alias PlanningPoker.Games.Game
+  alias PlanningPoker.Games.{Game, Round, GamePlayer}
 
 
   schema "games" do
     field :name, :string
     field :status, :string
+    has_many :rounds, Round
+    many_to_many :players, PlanningPoker.Accounts.User, join_through: "game_players"
 
     timestamps()
+  end
+
+  def possible_status do
+    ["open", "closed"]
   end
 
   @doc false
@@ -16,5 +22,6 @@ defmodule PlanningPoker.Games.Game do
     game
     |> cast(attrs, [:name, :status])
     |> validate_required([:name, :status])
+    |> validate_inclusion(:status, possible_status())
   end
 end
