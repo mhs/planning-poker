@@ -18,7 +18,7 @@
 <ul>
     <%= for player <- @players do %>
     <li>
-        <%= player.first_name %> <%=  player.last_name %>
+        <%= player.first_name %> <%=  player.last_name %>(<%= player.email %>)
     </li>
 
     <% end %>
@@ -30,5 +30,6 @@
     <span>The current round is <%= @current_round.id %></span>
 <% end %>
 
+<span><%= link "Join", to: game_join_path(@conn, :join, @game), method: :post %></span>
 <span><%= link "Edit", to: game_path(@conn, :edit, @game) %></span>
 <span><%= link "Back", to: game_path(@conn, :index) %></span>

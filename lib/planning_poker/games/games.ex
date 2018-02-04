@@ -400,16 +400,15 @@ defmodule PlanningPoker.Games do
     GamePlayer.changeset(player, %{})
   end
 
-  def get_players(%Game{id: id}), do: get_players(id)
-  def get_players(game_id) do
-    Repo.get!(Game, game_id)
+  def get_players(%Game{} = game) do
+    game
     |> Ecto.assoc(:players)
     |> Repo.all
   end
+  def get_players(id), do: get_players(Repo.get!(Game, id))
 
-  def join_game(game_id, user_id) do
-    Repo.get!(Game, game_id)
-    |> Ecto.build_assoc(:game_players, user_id: user_id)
-    |> Repo.insert()
+  def join_game(game_id, user) do
+    GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
+    |> Repo.insert
   end
 end

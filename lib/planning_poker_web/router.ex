@@ -44,6 +44,7 @@ defmodule PlanningPokerWeb.Router do
 
     resources "/games", GameController do
       post "/new_round", GameController, :new_round, as: :new_round
+      post "/join", GameController, :join, as: :join
     end
     resources "/rounds", RoundController
     get "/secret", PageController, :secret

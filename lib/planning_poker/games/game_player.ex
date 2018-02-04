@@ -15,7 +15,7 @@ defmodule PlanningPoker.Games.GamePlayer do
   @doc false
   def changeset(%GamePlayer{} = player, attrs) do
     player
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:user_id, :game_id])
+    |> validate_required([:user_id, :game_id])
   end
 end
