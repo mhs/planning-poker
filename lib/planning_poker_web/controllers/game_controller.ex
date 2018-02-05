@@ -2,6 +2,7 @@ defmodule PlanningPokerWeb.GameController do
   use PlanningPokerWeb, :controller
 
   alias PlanningPoker.Games
+  alias PlanningPoker.Rounds
   alias PlanningPoker.Games.{Game, Round}
 
   def index(conn, _params) do
@@ -20,6 +21,7 @@ defmodule PlanningPokerWeb.GameController do
         conn
         |> put_flash(:info, "Game created successfully.")
         |> redirect(to: game_path(conn, :show, game))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -31,6 +33,7 @@ defmodule PlanningPokerWeb.GameController do
         conn
         |> put_flash(:info, "Round created successfully.")
         |> redirect(to: game_path(conn, :show, game_id))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
         |> redirect(to: game_path(conn, :show, game_id))
@@ -39,11 +42,13 @@ defmodule PlanningPokerWeb.GameController do
 
   def join(conn, %{"game_id" => game_id}) do
     current_user = Guardian.Plug.current_resource(conn)
+
     case Games.join_game(game_id, current_user) do
       {:ok, _player} ->
         conn
         |> put_flash(:info, "You have joined the game")
         |> redirect(to: game_path(conn, :show, game_id))
+
       {:error, error_msg} ->
         conn
         |> put_flash(:error, error_msg)
@@ -55,19 +60,29 @@ defmodule PlanningPokerWeb.GameController do
     game = Games.get_game!(id)
     current_round = Games.current_round(game)
     players = Games.get_players(game)
-    render(conn,
+    current_user = Guardian.Plug.current_resource(conn)
+
+    render(
+      conn,
       "show.html",
       game: game,
       current_round: current_round,
       players: players,
-      estimates: Rounds.displayable_estimates(current_round, players))
+      estimates: Rounds.displayable_estimates(current_round, players),
+      my_estimate: Rounds.current_estimate(current_round, current_user)
+    )
+  end
+
+  def estimate(conn) do
   end
 
   def edit(conn, %{"id" => id}) do
     game = Games.get_game!(id)
     changeset = Games.change_game(game)
+
     conn
     |> put_flash(:info, "You have joined the game")
+
     render(conn, "edit.html", game: game, changeset: changeset)
   end
 
@@ -79,6 +94,7 @@ defmodule PlanningPokerWeb.GameController do
         conn
         |> put_flash(:info, "Game updated successfully.")
         |> redirect(to: game_path(conn, :show, game))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", game: game, changeset: changeset)
     end
