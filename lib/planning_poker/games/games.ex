@@ -105,11 +105,14 @@ defmodule PlanningPoker.Games do
     Game.changeset(game, %{})
   end
 
-
   def current_round(game) do
-    query = from r in Ecto.assoc(game, :rounds),
-      where: r.status == "open",
-      order_by: r.inserted_at
+    query =
+      from(
+        r in Ecto.assoc(game, :rounds),
+        where: r.status == "open",
+        order_by: r.inserted_at
+      )
+
     Repo.one(query)
   end
 
@@ -155,8 +158,9 @@ defmodule PlanningPoker.Games do
 
   """
   def create_round(attrs \\ %{}) do
-    IO.puts "creating round with attrs"
-    IO.inspect attrs
+    IO.puts("creating round with attrs")
+    IO.inspect(attrs)
+
     %Round{}
     |> Round.changeset(attrs)
     |> Repo.insert()
@@ -209,8 +213,6 @@ defmodule PlanningPoker.Games do
     Round.changeset(round, %{})
   end
 
-
-
   @doc """
   Gets a single player.
 
@@ -227,16 +229,16 @@ defmodule PlanningPoker.Games do
   """
   def get_player!(id), do: Repo.get!(GamePlayer, id)
 
-
   def get_players(%Game{} = game) do
     game
     |> Ecto.assoc(:players)
-    |> Repo.all
+    |> Repo.all()
   end
+
   def get_players(id), do: get_players(Repo.get!(Game, id))
 
   def join_game(game_id, user) do
     GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
-    |> Repo.insert
+    |> Repo.insert()
   end
 end

@@ -15,19 +15,20 @@ defmodule PlanningPoker.Accounts.User do
   end
 
   def basic_info(%Auth{} = auth) do
-    {:ok, %{
-      avatar: auth.info.image,
-      email: auth.info.email,
-      first_name: auth.info.first_name,
-      last_name: auth.info.last_name
-    }}
+    {:ok,
+     %{
+       avatar: auth.info.image,
+       email: auth.info.email,
+       first_name: auth.info.first_name,
+       last_name: auth.info.last_name
+     }}
   end
 
   @doc false
   def changeset(%User{} = user, attrs) do
     user
     |> cast(attrs, [:email, :auth_provider, :first_name, :last_name, :avatar])
-    |> validate_required( [:email])
+    |> validate_required([:email])
     |> unique_constraint(:email)
   end
 end

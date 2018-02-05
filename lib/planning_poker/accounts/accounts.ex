@@ -105,11 +105,12 @@ defmodule PlanningPoker.Accounts do
   def user_by_email(mail) do
     User
     |> where(email: ^mail)
-    |> Repo.one
+    |> Repo.one()
   end
 
   def authenticate_user(email) do
     user = user_by_email(email)
+
     if user != nil do
       {:ok, user}
     else

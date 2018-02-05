@@ -3,11 +3,10 @@ defmodule PlanningPoker.Rounds.Round do
   import Ecto.Changeset
   alias PlanningPoker.Rounds.{Estimate, Round}
 
-
   schema "rounds" do
-    field :status, :string
-    field :game_id, :id
-    has_many :estimates, Estimate
+    field(:status, :string)
+    field(:game_id, :id)
+    has_many(:estimates, Estimate)
 
     timestamps()
   end

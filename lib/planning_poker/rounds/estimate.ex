@@ -3,12 +3,11 @@ defmodule PlanningPoker.Rounds.Estimate do
   import Ecto.Changeset
   alias PlanningPoker.Rounds.Estimate
 
-
   schema "estimates" do
-    field :amount, :string
-    belongs_to :user, PlanningPoker.Accounts.User
-    belongs_to :round, PlanningPoker.Rounds.Round
-    field :pending, :boolean, virtual: true
+    field(:amount, :string)
+    belongs_to(:user, PlanningPoker.Accounts.User)
+    belongs_to(:round, PlanningPoker.Rounds.Round)
+    field(:pending, :boolean, virtual: true)
 
     timestamps()
   end

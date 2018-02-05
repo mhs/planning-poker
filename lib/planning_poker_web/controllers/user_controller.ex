@@ -4,7 +4,6 @@ defmodule PlanningPokerWeb.UserController do
   alias PlanningPoker.Accounts
   alias PlanningPoker.Accounts.User
 
-
   # plug Guardian.Plug.EnsureAuthenticated, handler: PlanningPokerWeb.AuthController
   def index(conn, _params) do
     users = Accounts.list_users()
@@ -22,14 +21,16 @@ defmodule PlanningPokerWeb.UserController do
         conn
         |> put_flash(:info, "User created successfully.")
         |> redirect(to: user_path(conn, :show, user))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
   end
 
   def current(conn, _) do
-    user = conn
-    |> Guardian.Plug.current_resource
+    user =
+      conn
+      |> Guardian.Plug.current_resource()
 
     conn
     |> render("show.html", user: user)
@@ -54,6 +55,7 @@ defmodule PlanningPokerWeb.UserController do
         conn
         |> put_flash(:info, "User updated successfully.")
         |> redirect(to: user_path(conn, :show, user))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", user: user, changeset: changeset)
     end

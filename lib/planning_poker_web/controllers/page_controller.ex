@@ -4,18 +4,26 @@ defmodule PlanningPokerWeb.PageController do
   alias PlanningPoker.Accounts
   alias PlanningPoker.Accounts.User
   alias PlanningPoker.Guardian
+
   def index(conn, _params) do
     changeset = PlanningPoker.Accounts.change_user(%User{})
     maybe_user = Guardian.Plug.current_resource(conn)
 
-    message = if maybe_user != nil do
-      "Welcome back #{maybe_user.email}!"
-    else
-      "No one is logged in"
-    end
+    message =
+      if maybe_user != nil do
+        "Welcome back #{maybe_user.email}!"
+      else
+        "No one is logged in"
+      end
+
     conn
     |> put_flash(:info, message)
-    |> render("index.html", changeset: changeset, maybe_user: maybe_user, action: page_path(conn, :login))
+    |> render(
+      "index.html",
+      changeset: changeset,
+      maybe_user: maybe_user,
+      action: page_path(conn, :login)
+    )
   end
 
   def login(conn, %{"user" => %{"email" => email}}) do
@@ -30,7 +38,8 @@ defmodule PlanningPokerWeb.PageController do
   end
 
   defp login_reply({:ok, user}, conn) do
-    IO.inspect user
+    IO.inspect(user)
+
     conn
     |> put_flash(:success, "Logged in")
     |> Guardian.Plug.sign_in(user)
@@ -38,7 +47,8 @@ defmodule PlanningPokerWeb.PageController do
   end
 
   def logout(conn, _params) do
-    IO.inspect conn
+    IO.inspect(conn)
+
     conn
     |> Guardian.Plug.sign_out()
     |> redirect(to: page_path(conn, :index))

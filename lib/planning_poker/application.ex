@@ -11,7 +11,7 @@ defmodule PlanningPoker.Application do
       # Start the Ecto repository
       supervisor(PlanningPoker.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(PlanningPokerWeb.Endpoint, []),
+      supervisor(PlanningPokerWeb.Endpoint, [])
       # Start your own worker by calling: PlanningPoker.Worker.start_link(arg1, arg2, arg3)
       # worker(PlanningPoker.Worker, [arg1, arg2, arg3]),
     ]

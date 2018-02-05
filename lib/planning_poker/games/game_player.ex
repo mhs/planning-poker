@@ -4,10 +4,9 @@ defmodule PlanningPoker.Games.GamePlayer do
   alias PlanningPoker.Games.{Game, GamePlayer}
   alias PlanningPoker.Accounts.User
 
-
   schema "game_players" do
-    belongs_to :user, User
-    belongs_to :game, Game
+    belongs_to(:user, User)
+    belongs_to(:game, Game)
 
     timestamps()
   end

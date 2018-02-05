@@ -1,10 +1,9 @@
 defmodule PlanningPokerWeb.AuthController do
   use PlanningPokerWeb, :controller
-  plug Ueberauth
+  plug(Ueberauth)
 
   alias PlanningPoker.Accounts.User
   alias PlanningPoker.Repo
-
 
   plug(:scrub_params, "user" when action in [:sign_in_user])
 
@@ -30,6 +29,7 @@ defmodule PlanningPokerWeb.AuthController do
     case User.basic_info(auth) do
       {:ok, user} ->
         sign_in_user(conn, %{"user" => user})
+
       {:error, _} ->
         conn
         |> put_status(401)
@@ -43,7 +43,8 @@ defmodule PlanningPokerWeb.AuthController do
     user = PlanningPoker.Accounts.user_by_email(oauth_user.email)
 
     if user do
-      IO.puts "found user"
+      IO.puts("found user")
+
       cond do
         true ->
           conn
@@ -52,7 +53,8 @@ defmodule PlanningPokerWeb.AuthController do
 
         false ->
           # not successful
-          IO.puts "uuuh false"
+          IO.puts("uuuh false")
+
           conn
           |> put_status(401)
           |> render(PlanningPokerWeb.ErrorView, "401.json-api")
@@ -63,16 +65,21 @@ defmodule PlanningPokerWeb.AuthController do
   end
 
   def sign_up_user(conn, %{"user" => user}) do
-    changeset = User.changeset %User{}, %{email: user.email,
-                                          avatar: user.avatar,
-                                          first_name: user.first_name,
-                                          last_name: user.last_name,
-                                          auth_provider: "google"}
-    case Repo.insert changeset do
+    changeset =
+      User.changeset(%User{}, %{
+        email: user.email,
+        avatar: user.avatar,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        auth_provider: "google"
+      })
+
+    case Repo.insert(changeset) do
       {:ok, user} ->
         conn
         |> PlanningPoker.Guardian.Plug.sign_in(user)
         |> redirect(to: "/")
+
       {:error, _} ->
         conn
         |> put_status(422)

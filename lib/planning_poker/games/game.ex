@@ -3,12 +3,11 @@ defmodule PlanningPoker.Games.Game do
   import Ecto.Changeset
   alias PlanningPoker.Games.{Game}
 
-
   schema "games" do
-    field :name, :string
-    field :status, :string
-    has_many :rounds, PlanningPoker.Rounds.Round
-    many_to_many :players, PlanningPoker.Accounts.User, join_through: "game_players"
+    field(:name, :string)
+    field(:status, :string)
+    has_many(:rounds, PlanningPoker.Rounds.Round)
+    many_to_many(:players, PlanningPoker.Accounts.User, join_through: "game_players")
 
     timestamps()
   end

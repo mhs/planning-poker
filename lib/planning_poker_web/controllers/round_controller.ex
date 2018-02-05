@@ -20,6 +20,7 @@ defmodule PlanningPokerWeb.RoundController do
         conn
         |> put_flash(:info, "Round created successfully.")
         |> redirect(to: round_path(conn, :show, round))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -44,6 +45,7 @@ defmodule PlanningPokerWeb.RoundController do
         conn
         |> put_flash(:info, "Round updated successfully.")
         |> redirect(to: round_path(conn, :show, round))
+
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "edit.html", round: round, changeset: changeset)
     end
