@@ -2,7 +2,7 @@ defmodule PlanningPokerWeb.RoundController do
   use PlanningPokerWeb, :controller
 
   alias PlanningPoker.Games
-  alias PlanningPoker.Games.Round
+  alias PlanningPoker.Rounds.Round
 
   def index(conn, _params) do
     rounds = Games.list_rounds()

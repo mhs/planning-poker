@@ -26,7 +26,7 @@ defmodule PlanningPokerWeb.GameController do
   end
 
   def new_round(conn, %{"game_id" => game_id}) do
-    case Games.create_round(%{game_id: game_id, status: "open"}) do
+    case Rounds.next_round(game_id) do
       {:ok, round} ->
         conn
         |> put_flash(:info, "Round created successfully.")
@@ -55,7 +55,12 @@ defmodule PlanningPokerWeb.GameController do
     game = Games.get_game!(id)
     current_round = Games.current_round(game)
     players = Games.get_players(game)
-    render(conn, "show.html", game: game, current_round: current_round, players: players)
+    render(conn,
+      "show.html",
+      game: game,
+      current_round: current_round,
+      players: players,
+      estimates: Rounds.displayable_estimates(current_round, players))
   end
 
   def edit(conn, %{"id" => id}) do

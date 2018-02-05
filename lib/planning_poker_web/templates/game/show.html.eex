@@ -28,6 +28,12 @@
     <span><%= link "Start new round", to: game_new_round_path(@conn, :new_round, @game), method: :post %></span>
 <% else %>
     <span>The current round is <%= @current_round.id %></span>
+    <%= for estimate <- @estimates do %>
+    <li>
+        <%= estimate.player.email %> voted <%= estimate.value %>
+    </li>
+
+    <% end %>
 <% end %>
 
 <span><%= link "Join", to: game_join_path(@conn, :join, @game), method: :post %></span>
