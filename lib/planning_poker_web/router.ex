@@ -47,7 +47,7 @@ defmodule PlanningPokerWeb.Router do
     resources "/games", GameController do
       post("/new_round", GameController, :new_round, as: :new_round)
       post("/join", GameController, :join, as: :join)
-      post("/estimate", GameController, :join, as: :estimate)
+      post("/estimate", GameController, :estimate, as: :estimate)
     end
 
     resources("/rounds", RoundController)

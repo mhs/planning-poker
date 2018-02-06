@@ -10,7 +10,6 @@ defmodule PlanningPoker.Repo.Migrations.CreateEstimates do
       timestamps()
     end
 
-    create index(:estimates, [:user_id])
-    create index(:estimates, [:round_id])
+    create unique_index(:estimates, [:round_id, :user_id])
   end
 end

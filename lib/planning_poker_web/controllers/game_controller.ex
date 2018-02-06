@@ -73,7 +73,13 @@ defmodule PlanningPokerWeb.GameController do
     )
   end
 
-  def estimate(conn) do
+  def estimate(conn, %{"game_id" => game_id, "estimate" => %{"amount" => amount, "round_id" => round_id}}) do
+    current_user = Guardian.Plug.current_resource(conn)
+    round = Repo.get! round_id
+    Rounds.set_estimate(round_id, current_user.id, amount)
+    conn
+    |> redirect(to: game_path(conn, :show, game_id))
+
   end
 
   def edit(conn, %{"id" => id}) do

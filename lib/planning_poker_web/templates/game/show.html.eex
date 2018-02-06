@@ -30,13 +30,18 @@
     <span>The current round is <%= @current_round.id %></span>
     <%= for estimate <- @estimates do %>
       <li>
-        <%= estimate.player.email %> voted <%= estimate.value %>
+        <%=  if estimate.pending do %>
+        <%= estimate.user.email %> has not voted yet
+            <% else %>
+            <%= estimate.user.email %> voted <%= estimate.amount %>
+            <% end %>
       </li>
     <% end %>
 
     <h3>My estimate</h3>
     <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>
-      <%= select f, :value, ~w(1 2 3 5 8 13 pass) %>
+      <%= hidden_input f, :round_id %>
+      <%= select f, :amount, ~w(1 2 3 5 8 13 pass) %>
       <div class="form-group">
         <%= submit "Submit", class: "btn btn-primary" %>
       </div>
