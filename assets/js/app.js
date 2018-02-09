@@ -1,22 +1,6 @@
-webpackJsonp([0],[
-/* 0 */,
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+import { Socket } from 'phoenix';
 
-__webpack_require__(2);
-module.exports = __webpack_require__(3);
-
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _phoenix = __webpack_require__(0);
-
-(function () {
+(function() {
     function buildHiddenInput(name, value) {
         var input = document.createElement("input");
         input.type = "hidden";
@@ -27,7 +11,7 @@ var _phoenix = __webpack_require__(0);
 
     function handleLinkClick(link) {
         var message = link.getAttribute("data-confirm");
-        if (message && !window.confirm(message)) {
+        if(message && !window.confirm(message)) {
             return;
         }
 
@@ -46,19 +30,9 @@ var _phoenix = __webpack_require__(0);
         form.submit();
     }
 
-    window.addEventListener("click", function (e) {
-        if (e.target && e.target.getAttribute("data-method")) {
+    window.addEventListener("click", function(e) {
+        if(e.target && e.target.getAttribute("data-method")) {
             handleLinkClick(e.target);
         }
     }, false);
 })();
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ })
-],[1]);
-//# sourceMappingURL=app.js.map

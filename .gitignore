@@ -9,6 +9,7 @@ erl_crash.dump
 
 # JS stuff
 node_modules/
+*.map
 
 # Files matching config/*.secret.exs pattern contain sensitive
 # data and you should not commit them into version control.
