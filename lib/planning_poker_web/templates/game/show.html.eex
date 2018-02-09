@@ -14,6 +14,12 @@
 
 </ul>
 
+<%= if Enum.member?(@players, @current_user) do %>
+  <span><%= link "Leave Game", to: game_leave_path(@conn, :leave, @game), method: :post %></span>
+<% else %>
+  <span><%= link "Join Game", to: game_join_path(@conn, :join, @game), method: :post %></span>
+<% end %>
+
 <h2>People in this game</h2>
 <ul>
     <%= for player <- @players do %>
@@ -24,19 +30,18 @@
     <% end %>
 </ul>
 
-<%= if @current_round == nil do %>
-    <span><%= link "Start new round", to: game_new_round_path(@conn, :new_round, @game), method: :post %></span>
-<% else %>
-    <span>The current round is <%= @current_round.id %></span>
-    <%= for estimate <- @estimates do %>
-      <li>
-        <%=  if estimate.pending do %>
-        <%= estimate.user.email %> has not voted yet
-            <% else %>
-            <%= estimate.user.email %> voted <%= estimate.amount %>
-            <% end %>
-      </li>
+<%= if @current_round == nil || @current_round.status == "closed" do %>
+  <p>
+    <%= link "Start new round", to: game_new_round_path(@conn, :new_round, @game), method: :post %>
+  </p>
+<% end %>
+<%= if @current_round do %>
+    <p>The current round is <%= @current_round.id %></p>
+    <%= if @current_round.status == "open" do %>
+      <span><%= link "Close Round", to: game_close_round_path(@conn, :close_round, @game), method: :post %></span>
     <% end %>
+
+    <%= render "estimates.html", estimates: @estimates, round: @current_round %>
 
     <h3>My estimate</h3>
     <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>
@@ -48,6 +53,5 @@
     <% end %>
 <% end %>
 
-<span><%= link "Join", to: game_join_path(@conn, :join, @game), method: :post %></span>
 <span><%= link "Edit", to: game_path(@conn, :edit, @game) %></span>
 <span><%= link "Back", to: game_path(@conn, :index) %></span>

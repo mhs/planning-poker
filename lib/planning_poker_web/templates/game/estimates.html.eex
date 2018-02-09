@@ -1,0 +1,19 @@
+<ul>
+  <%= for estimate <- @estimates do %>
+    <li>
+      <%= if @round.status == "closed" do %>
+        <%= if PlanningPoker.Rounds.Estimate.pending?(estimate) do %>
+          <%= estimate.user.email %> did not vote
+        <% else %>
+          <%= estimate.user.email %> voted <%= estimate.amount %>
+        <% end %>
+      <% else %>
+        <%= if PlanningPoker.Rounds.Estimate.pending?(estimate) do %>
+          <%= estimate.user.email %> has not voted
+        <% else %>
+          <%= estimate.user.email %> has voted
+        <% end %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>

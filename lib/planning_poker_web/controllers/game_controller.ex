@@ -40,6 +40,21 @@ defmodule PlanningPokerWeb.GameController do
     end
   end
 
+  def close_round(conn, %{"game_id" => game_id}) do
+    round = Games.current_round(Games.get_game!(game_id))
+    case Rounds.close_round(round) do
+      {:ok, round} ->
+        conn
+        |> put_flash(:info, "Round closed!")
+        |> redirect(to: game_path(conn, :show, game_id))
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        conn
+        |> put_flash(:error, "There was a problem closing the round")
+        |> redirect(to: game_path(conn, :show, game_id))
+    end
+  end
+
   def join(conn, %{"game_id" => game_id}) do
     current_user = Guardian.Plug.current_resource(conn)
 
@@ -68,18 +83,28 @@ defmodule PlanningPokerWeb.GameController do
       game: game,
       current_round: current_round,
       players: players,
+      current_user: current_user,
       estimates: Rounds.displayable_estimates(current_round, players),
-      my_estimate: Rounds.current_estimate(current_round, current_user)
+      my_estimate: Rounds.current_estimate(current_round, current_user) |> Ecto.Changeset.change()
     )
   end
 
-  def estimate(conn, %{"game_id" => game_id, "estimate" => %{"amount" => amount, "round_id" => round_id}}) do
+  def estimate(conn, %{
+        "game_id" => game_id,
+        "estimate" => %{"amount" => amount, "round_id" => round_id}
+      }) do
     current_user = Guardian.Plug.current_resource(conn)
-    round = Repo.get! round_id
-    Rounds.set_estimate(round_id, current_user.id, amount)
-    conn
-    |> redirect(to: game_path(conn, :show, game_id))
+    round = Rounds.get_round!(round_id)
+    case Rounds.set_estimate(round, current_user, amount) do
+      {:ok, estimate} ->
+        conn
+        |> redirect(to: game_path(conn, :show, game_id))
 
+      {:error, c} ->
+        conn
+        |> redirect(to: game_path(conn, :show, game_id))
+
+    end
   end
 
   def edit(conn, %{"id" => id}) do

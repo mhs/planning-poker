@@ -7,8 +7,8 @@ defmodule PlanningPoker.Games do
   alias PlanningPoker.Repo
 
   alias PlanningPoker.Accounts.User
-  alias PlanningPoker.Games.Game
-  alias PlanningPoker.Games.GamePlayer
+  alias PlanningPoker.Games.{Game, GamePlayer}
+  alias PlanningPoker.Rounds
   alias PlanningPoker.Rounds.Round
 
   @doc """
@@ -106,14 +106,12 @@ defmodule PlanningPoker.Games do
   end
 
   def current_round(game) do
-    query =
-      from(
-        r in Ecto.assoc(game, :rounds),
-        where: r.status == "open",
-        order_by: r.inserted_at
-      )
-
-    Repo.one(query)
+    from(
+      r in Ecto.assoc(game, :rounds),
+      order_by: [desc: r.inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
   end
 
   @doc """
@@ -238,7 +236,11 @@ defmodule PlanningPoker.Games do
   def get_players(id), do: get_players(Repo.get!(Game, id))
 
   def join_game(game_id, user) do
-    GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
-    |> Repo.insert()
+    Repo.transaction(fn ->
+      GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
+      |> Repo.insert()
+
+      Rounds.create_pending_estimate(get_game!(game_id), user)
+    end)
   end
 end

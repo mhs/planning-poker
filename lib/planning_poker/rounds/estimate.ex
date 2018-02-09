@@ -7,7 +7,6 @@ defmodule PlanningPoker.Rounds.Estimate do
     field(:amount, :string)
     belongs_to(:user, PlanningPoker.Accounts.User)
     belongs_to(:round, PlanningPoker.Rounds.Round)
-    field(:pending, :boolean, virtual: true)
 
     timestamps()
   end
@@ -20,5 +19,15 @@ defmodule PlanningPoker.Rounds.Estimate do
     |> cast(attrs, [:amount, :user_id, :round_id])
     |> validate_required([:amount, :user_id, :round_id])
     |> validate_inclusion(:amount, @valid_amounts)
+  end
+
+  def pending_estimate(attrs) do
+    %Estimate{}
+    |> cast(attrs, [:user_id, :round_id])
+    |> validate_required([:user_id, :round_id])
+  end
+
+  def pending?(estimate) do
+    estimate.amount == nil
   end
 end
