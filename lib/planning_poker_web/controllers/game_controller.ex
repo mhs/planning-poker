@@ -42,6 +42,7 @@ defmodule PlanningPokerWeb.GameController do
 
   def close_round(conn, %{"game_id" => game_id}) do
     round = Games.current_round(Games.get_game!(game_id))
+
     case Rounds.close_round(round) do
       {:ok, round} ->
         conn
@@ -95,15 +96,29 @@ defmodule PlanningPokerWeb.GameController do
       }) do
     current_user = Guardian.Plug.current_resource(conn)
     round = Rounds.get_round!(round_id)
+    game = Games.get_game!(game_id)
+    players = Games.get_players(game)
+
     case Rounds.set_estimate(round, current_user, amount) do
       {:ok, estimate} ->
+        Task.async(fn ->
+          new_info =
+            Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
+              estimates: Rounds.displayable_estimates(round, players),
+              round: round
+            })
+
+          PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", %{
+            estimates: new_info
+          })
+        end)
+
         conn
         |> redirect(to: game_path(conn, :show, game_id))
 
       {:error, c} ->
         conn
         |> redirect(to: game_path(conn, :show, game_id))
-
     end
   end
 

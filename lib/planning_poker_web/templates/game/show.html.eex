@@ -1,4 +1,4 @@
-<h2>Show Game</h2>
+<h2 id="game-page" data-game-id=<%= @game.id %>>Show Game</h2>
 
 <ul>
 
@@ -41,7 +41,11 @@
       <span><%= link "Close Round", to: game_close_round_path(@conn, :close_round, @game), method: :post %></span>
     <% end %>
 
-    <%= render "estimates.html", estimates: @estimates, round: @current_round %>
+    <div id="estimates"
+         data-controller="estimates"
+         data-game-id=<%= @game.id %>>
+      <%= render "estimates.html", estimates: @estimates, round: @current_round %>
+    </div>
 
     <h3>My estimate</h3>
     <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>

@@ -7,6 +7,7 @@ defmodule PlanningPokerWeb.Router do
 
   pipeline :ensure_auth do
     plug(Guardian.Plug.EnsureAuthenticated)
+    plug(:assign_token)
   end
 
   pipeline :browser do
@@ -69,6 +70,12 @@ defmodule PlanningPokerWeb.Router do
     IO.puts("---plug #{s}")
     IO.inspect(conn)
     conn
+  end
+
+  def assign_token(conn, _) do
+    token = PlanningPoker.Guardian.Plug.current_token(conn)
+    conn
+    |> assign(:user_token, token)
   end
 
   # Other scopes may use custom stacks.
