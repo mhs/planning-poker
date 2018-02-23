@@ -2,21 +2,17 @@ defmodule PlanningPoker.AccountsTest do
   use PlanningPoker.DataCase
 
   alias PlanningPoker.Accounts
+  alias PlanningPoker.Factory
 
   describe "users" do
     alias PlanningPoker.Accounts.User
 
-    @valid_attrs %{name: "some name", username: "some username"}
-    @update_attrs %{name: "some updated name", username: "some updated username"}
-    @invalid_attrs %{name: nil, username: nil}
+    @valid_attrs %{email: "email@example.com"}
+    @update_attrs %{email: "new@example.com"}
+    @invalid_attrs %{email: nil}
 
     def user_fixture(attrs \\ %{}) do
-      {:ok, user} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Accounts.create_user()
-
-      user
+      Factory.insert(:user, attrs)
     end
 
     test "list_users/0 returns all users" do
@@ -31,8 +27,7 @@ defmodule PlanningPoker.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.name == "some name"
-      assert user.username == "some username"
+      assert user.email == "email@example.com"
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -43,8 +38,7 @@ defmodule PlanningPoker.AccountsTest do
       user = user_fixture()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.name == "some updated name"
-      assert user.username == "some updated username"
+      assert user.email == "new@example.com"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

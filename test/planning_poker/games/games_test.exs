@@ -1,13 +1,15 @@
 defmodule PlanningPoker.GamesTest do
   use PlanningPoker.DataCase
 
+  alias PlanningPoker.Factory
   alias PlanningPoker.Games
+  alias PlanningPoker.Games.{Game, GamePlayer}
+  alias PlanningPoker.Rounds.Estimate
 
   describe "games" do
-    alias PlanningPoker.Games.Game
 
-    @valid_attrs %{name: "some name", status: "some status"}
-    @update_attrs %{name: "some updated name", status: "some updated status"}
+    @valid_attrs %{name: "some name", status: "open"}
+    @update_attrs %{name: "some updated name", status: "closed"}
     @invalid_attrs %{name: nil, status: nil}
 
     def game_fixture(attrs \\ %{}) do
@@ -32,7 +34,7 @@ defmodule PlanningPoker.GamesTest do
     test "create_game/1 with valid data creates a game" do
       assert {:ok, %Game{} = game} = Games.create_game(@valid_attrs)
       assert game.name == "some name"
-      assert game.status == "some status"
+      assert game.status == "open"
     end
 
     test "create_game/1 with invalid data returns error changeset" do
@@ -44,7 +46,7 @@ defmodule PlanningPoker.GamesTest do
       assert {:ok, game} = Games.update_game(game, @update_attrs)
       assert %Game{} = game
       assert game.name == "some updated name"
-      assert game.status == "some updated status"
+      assert game.status == "closed"
     end
 
     test "update_game/2 with invalid data returns error changeset" do
@@ -66,60 +68,20 @@ defmodule PlanningPoker.GamesTest do
   end
 
   describe "players" do
-    alias PlanningPoker.Games.GamePlayer
 
-    @valid_attrs %{}
-    @update_attrs %{}
-    @invalid_attrs %{}
+    test "join_game/2 adds the player and an estimate to a game" do
+      game = Factory.insert(:game)
+      |> Factory.with_round()
+      user = Factory.insert(:user)
 
-    def player_fixture(attrs \\ %{}) do
-      {:ok, player} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Games.create_player()
+      Games.join_game(game.id, user)
 
-      player
+      assert Repo.get_by(GamePlayer, game_id: game.id, user_id: user.id) != nil
+      assert Repo.one(Estimate) != nil
     end
 
-    test "list_players/0 returns all players" do
-      player = player_fixture()
-      assert Games.list_players() == [player]
-    end
+    test "leave_game/2 removes the player and all their estimates from a game" do
 
-    test "get_player!/1 returns the player with given id" do
-      player = player_fixture()
-      assert Games.get_player!(player.id) == player
-    end
-
-    test "create_player/1 with valid data creates a player" do
-      assert {:ok, %GamePlayer{} = player} = Games.create_player(@valid_attrs)
-    end
-
-    test "create_player/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Games.create_player(@invalid_attrs)
-    end
-
-    test "update_player/2 with valid data updates the player" do
-      player = player_fixture()
-      assert {:ok, player} = Games.update_player(player, @update_attrs)
-      assert %GamePlayer{} = player
-    end
-
-    test "update_player/2 with invalid data returns error changeset" do
-      player = player_fixture()
-      assert {:error, %Ecto.Changeset{}} = Games.update_player(player, @invalid_attrs)
-      assert player == Games.get_player!(player.id)
-    end
-
-    test "delete_player/1 deletes the player" do
-      player = player_fixture()
-      assert {:ok, %GamePlayer{}} = Games.delete_player(player)
-      assert_raise Ecto.NoResultsError, fn -> Games.get_player!(player.id) end
-    end
-
-    test "change_player/1 returns a player changeset" do
-      player = player_fixture()
-      assert %Ecto.Changeset{} = Games.change_player(player)
     end
   end
 end

@@ -16,7 +16,7 @@ defmodule PlanningPokerWeb.GameController do
   end
 
   def create(conn, %{"game" => game_params}) do
-    case Games.create_game(game_params) do
+    case Games.create_game_with_round(game_params) do
       {:ok, game} ->
         conn
         |> put_flash(:info, "Game created successfully.")
@@ -29,12 +29,12 @@ defmodule PlanningPokerWeb.GameController do
 
   def new_round(conn, %{"game_id" => game_id}) do
     case Rounds.next_round(game_id) do
-      {:ok, round} ->
+      {:ok, _round} ->
         conn
         |> put_flash(:info, "Round created successfully.")
         |> redirect(to: game_path(conn, :show, game_id))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Ecto.Changeset{}} ->
         conn
         |> redirect(to: game_path(conn, :show, game_id))
     end
@@ -44,7 +44,7 @@ defmodule PlanningPokerWeb.GameController do
     round = Games.current_round(Games.get_game!(game_id))
 
     case Rounds.close_round(round) do
-      {:ok, round} ->
+      {:ok, _round} ->
         conn
         |> put_flash(:info, "Round closed!")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -72,11 +72,33 @@ defmodule PlanningPokerWeb.GameController do
     end
   end
 
+  def leave(conn, %{"game_id" => game_id}) do
+    current_user = Guardian.Plug.current_resource(conn)
+
+    case Games.leave_game(game_id, current_user) do
+      {:ok, _player} ->
+        conn
+        |> put_flash(:info, "You have joined the game")
+        |> redirect(to: game_path(conn, :show, game_id))
+
+      {:error, error_msg} ->
+        conn
+        |> put_flash(:error, error_msg)
+        |> redirect(to: game_path(conn, :show, game_id))
+    end
+  end
+
   def show(conn, %{"id" => id}) do
     game = Games.get_game!(id)
     current_round = Games.current_round(game)
     players = Games.get_players(game)
     current_user = Guardian.Plug.current_resource(conn)
+
+    my_estimate =
+      case Rounds.current_estimate(current_round, current_user) do
+        nil -> nil
+        e -> Ecto.ChangeSet.change(e)
+      end
 
     render(
       conn,
@@ -85,8 +107,8 @@ defmodule PlanningPokerWeb.GameController do
       current_round: current_round,
       players: players,
       current_user: current_user,
-      estimates: Rounds.displayable_estimates(current_round, players),
-      my_estimate: Rounds.current_estimate(current_round, current_user) |> Ecto.Changeset.change()
+      estimates: Rounds.estimates(current_round),
+      my_estimate: my_estimate
     )
   end
 
@@ -104,7 +126,7 @@ defmodule PlanningPokerWeb.GameController do
         Task.async(fn ->
           new_info =
             Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
-              estimates: Rounds.displayable_estimates(round, players),
+              estimates: Rounds.estimates(round, players),
               round: round
             })
 

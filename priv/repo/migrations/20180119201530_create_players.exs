@@ -3,7 +3,7 @@ defmodule PlanningPoker.Repo.Migrations.CreatePlayers do
 
   def change do
     create table(:game_players) do
-      add :game_id, references(:games, on_delete: :nothing)
+      add :game_id, references(:games, on_delete: :delete_all)
       add :user_id, references(:users, on_delete: :nothing)
 
       timestamps()

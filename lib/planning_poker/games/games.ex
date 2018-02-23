@@ -58,6 +58,14 @@ defmodule PlanningPoker.Games do
     |> Repo.insert()
   end
 
+  def create_game_with_round(attrs \\ %{}) do
+    with {:ok, game} <- %Game{}
+    |> Game.changeset(attrs)
+    |> Repo.insert(),
+    {:ok, round} <- Rounds.next_round(game.id),
+    do: {:ok, game}
+  end
+
   @doc """
   Updates a game.
 
@@ -211,22 +219,6 @@ defmodule PlanningPoker.Games do
     Round.changeset(round, %{})
   end
 
-  @doc """
-  Gets a single player.
-
-  Raises `Ecto.NoResultsError` if the GamePlayer does not exist.
-
-  ## Examples
-
-      iex> get_player!(123)
-      %GamePlayer{}
-
-      iex> get_player!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_player!(id), do: Repo.get!(GamePlayer, id)
-
   def get_players(%Game{} = game) do
     game
     |> Ecto.assoc(:players)
@@ -235,12 +227,22 @@ defmodule PlanningPoker.Games do
 
   def get_players(id), do: get_players(Repo.get!(Game, id))
 
-  def join_game(game_id, user) do
+  def join_game(game_id, %User{} = user) do
     Repo.transaction(fn ->
-      GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
+      {:ok, game_player} = GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
       |> Repo.insert()
 
-      Rounds.create_pending_estimate(get_game!(game_id), user)
+
+      round = game_id |> get_game!() |> current_round()
+      Rounds.create_pending_estimate(round, game_player)
+    end)
+  end
+
+  def leave_game(game_id, user) do
+    Repo.transaction(fn ->
+      (from g in GamePlayer, where: [game_id: ^game_id, user_id: ^user.id])
+      |> Repo.delete_all()
+      # find estimates for all rounds for the user/game
     end)
   end
 end

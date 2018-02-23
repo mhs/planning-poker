@@ -2,12 +2,14 @@
 defmodule PlanningPoker.Rounds do
   alias PlanningPoker.Repo
   alias PlanningPoker.Games
+  alias PlanningPoker.Games.GamePlayer
   alias PlanningPoker.Rounds.{Estimate, Round}
-  require Ecto.Query
+  import Ecto.Query
 
   def get_round!(id), do: Repo.get!(Round, id)
 
   def rescind_estimate(round, user) do
+    # TODO: get game player for user?
     Ecto.Query.from(e in Estimate, where: [round_id: ^round.id, user_id: ^user.id])
     |> Repo.delete()
   end
@@ -20,7 +22,7 @@ defmodule PlanningPoker.Rounds do
   def next_round(game_id) do
     players = Games.get_players(game_id)
     Repo.transaction(fn ->
-      Ecto.Query.from(r in Round, where: [game_id: ^game_id, status: "open"])
+      from(r in Round, where: [game_id: ^game_id, status: "open"])
       |> Repo.update_all(set: [status: "closed"])
 
       # create a new open round
@@ -35,22 +37,22 @@ defmodule PlanningPoker.Rounds do
     end)
   end
 
-  def create_pending_estimate(game, player) do
-    round = Games.current_round(game)
-    %{user_id: player.id, round_id: round.id}
+  def create_pending_estimate(round, %GamePlayer{id: player_id}) do
+    %{game_player_id: player_id, round_id: round.id}
     |> Estimate.pending_estimate()
     |> Repo.insert()
   end
 
   # Retrieves players' estimates for the round or shows a 'pending' estimate
-  def displayable_estimates(nil, _), do: []
+  def estimates(nil), do: []
 
-  def displayable_estimates(round, players) do
-    player_ids = Enum.map(players, &(&1.id))
+  def estimates(round = %Round{}) do
+    # join rounds, game_players, players, and estimates
+    # from e in Estimate,
+    #   join: r in Round,
+    #   join: g in GamePlayer
     Ecto.assoc(round, :estimates)
-    |> Ecto.Query.where([e], e.user_id in ^player_ids)
     |> Repo.all()
-    |> Repo.preload(:user)
   end
 
   defp create_round(attrs \\ %{}) do
@@ -69,6 +71,11 @@ defmodule PlanningPoker.Rounds do
   def current_estimate(nil, _), do: nil
 
   def current_estimate(round, user) do
-    Repo.get_by(Estimate, round_id: round.id, user_id: user.id)
+    q = Ecto.Query.from e in Estimate,
+      join: g in assoc(e, :game_player),
+      join: u in assoc(g, :user),
+      where: u.id == ^user.id
+
+    Repo.one(q)
   end
 end

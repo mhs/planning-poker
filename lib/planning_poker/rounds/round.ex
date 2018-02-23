@@ -5,7 +5,7 @@ defmodule PlanningPoker.Rounds.Round do
 
   schema "rounds" do
     field(:status, :string)
-    field(:game_id, :id)
+    belongs_to(:game, PlanningPoker.Games.Game)
     has_many(:estimates, Estimate)
 
     timestamps()

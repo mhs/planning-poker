@@ -44,7 +44,8 @@ defmodule PlanningPoker.Mixfile do
       {:ueberauth, "~> 0.5"},
       {:ueberauth_google, "~> 0.7"},
       {:ja_serializer, "~> 0.12"},
-      {:guardian, "~> 1.0"}
+      {:guardian, "~> 1.0"},
+      {:ex_machina, "~> 2.1", only: :test},
     ]
   end
 
