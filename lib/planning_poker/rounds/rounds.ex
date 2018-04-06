@@ -47,12 +47,7 @@ defmodule PlanningPoker.Rounds do
   def estimates(nil), do: []
 
   def estimates(round = %Round{}) do
-    # join rounds, game_players, players, and estimates
-    # from e in Estimate,
-    #   join: r in Round,
-    #   join: g in GamePlayer
-    Ecto.assoc(round, :estimates)
-    |> Repo.all()
+    (from e in Ecto.assoc(round, :estimates), preload: :user) |> Repo.all()
   end
 
   defp create_round(attrs \\ %{}) do
