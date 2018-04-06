@@ -1,0 +1,7 @@
+<ul>
+  <%= for player <- @players do %>
+    <li>
+      <%= player.first_name %> <%=  player.last_name %>(<%= player.email %>)
+    </li>
+  <% end %>
+</ul>

@@ -61,6 +61,7 @@ defmodule PlanningPokerWeb.GameController do
 
     case Games.join_game(game_id, current_user) do
       {:ok, _player} ->
+        refresh_game_page(game_id)
         conn
         |> put_flash(:info, "You have joined the game")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -72,11 +73,42 @@ defmodule PlanningPokerWeb.GameController do
     end
   end
 
+  defp refresh_game_page(game_id) do
+    game = Games.get_game!(game_id)
+    current_round = Games.current_round(game)
+    players = Games.get_players(game)
+
+    refresh_players(game_id, players)
+    refresh_estimates(game_id, current_round, players)
+  end
+
+  defp refresh_players(game_id, players) do
+    Task.async(fn ->
+      new_info = Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "players.html", %{players: players})
+
+      PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "players_updated", %{
+      players: new_info
+    })
+    end)
+  end
+
+  defp refresh_estimates(game_id, round, players) do
+    Task.async(fn ->
+      new_info =
+        Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
+              estimates: Rounds.estimates(round),
+              round: round})
+
+      PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", %{estimates: new_info})
+    end)
+  end
+
   def leave(conn, %{"game_id" => game_id}) do
     current_user = Guardian.Plug.current_resource(conn)
 
     case Games.leave_game(game_id, current_user) do
       {:ok, _player} ->
+        refresh_game_page(game_id)
         conn
         |> put_flash(:info, "You have joined the game")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -97,7 +129,7 @@ defmodule PlanningPokerWeb.GameController do
     my_estimate =
       case Rounds.current_estimate(current_round, current_user) do
         nil -> nil
-        e -> Ecto.ChangeSet.change(e)
+        e -> Ecto.Changeset.change(e)
       end
 
     render(
@@ -123,17 +155,7 @@ defmodule PlanningPokerWeb.GameController do
 
     case Rounds.set_estimate(round, current_user, amount) do
       {:ok, estimate} ->
-        Task.async(fn ->
-          new_info =
-            Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
-              estimates: Rounds.estimates(round, players),
-              round: round
-            })
-
-          PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", %{
-            estimates: new_info
-          })
-        end)
+        refresh_game_page(game_id)
 
         conn
         |> redirect(to: game_path(conn, :show, game_id))

@@ -21,14 +21,9 @@
 <% end %>
 
 <h2>People in this game</h2>
-<ul>
-  <%= for player <- @players do %>
-    <li>
-      <%= player.first_name %> <%=  player.last_name %>(<%= player.email %>)
-    </li>
-
-  <% end %>
-</ul>
+<div id="players" data-controller="players" data-game-id=<%= @game.id %> >
+  <%= render "players.html", players: @players %>
+</div>
 
 <%= if @current_round == nil || @current_round.status == "closed" do %>
   <p>
