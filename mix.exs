@@ -46,6 +46,7 @@ defmodule PlanningPoker.Mixfile do
       {:ja_serializer, "~> 0.12"},
       {:guardian, "~> 1.0"},
       {:ex_machina, "~> 2.1", only: :test},
+      {:hound, "~> 1.0"},
     ]
   end
 
