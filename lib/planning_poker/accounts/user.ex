@@ -3,6 +3,7 @@ defmodule PlanningPoker.Accounts.User do
   import Ecto.Changeset
   alias PlanningPoker.Accounts.User
   alias Ueberauth.Auth
+  alias PlanningPoker.Games.GamePlayer
 
   schema "users" do
     field(:email, :string)
@@ -10,6 +11,9 @@ defmodule PlanningPoker.Accounts.User do
     field(:first_name, :string)
     field(:last_name, :string)
     field(:avatar, :string)
+
+    has_many(:game_players, GamePlayer)
+    has_many(:games, through: [:game_players, :game])
 
     timestamps()
   end

@@ -69,8 +69,18 @@ defmodule PlanningPoker.Rounds do
     q = Ecto.Query.from e in Estimate,
       join: g in assoc(e, :game_player),
       join: u in assoc(g, :user),
-      where: u.id == ^user.id
+      where: u.id == ^user.id,
+      where: e.round_id == ^round.id
 
-    Repo.one(q)
+
+    case q |> Repo.one do
+      nil ->
+        game_player = Ecto.assoc(user, :game_players)
+        |> where([p], p.game_id == ^round.game_id)
+        |> Repo.one
+
+        %Estimate{round_id: round.id, game_player_id: game_player.id}
+      %Estimate{} = e -> e
+    end
   end
 end

@@ -16,12 +16,20 @@ defmodule PlanningPokerWeb.PageController do
         "No one is logged in"
       end
 
+    games =
+    if maybe_user != nil do
+      PlanningPoker.Repo.all(Ecto.assoc(maybe_user, :games))
+    else
+      []
+    end
+
     conn
     |> put_flash(:info, message)
     |> render(
       "index.html",
       changeset: changeset,
       maybe_user: maybe_user,
+      games: games,
       action: page_path(conn, :login)
     )
   end
