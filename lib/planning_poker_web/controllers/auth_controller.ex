@@ -37,14 +37,29 @@ defmodule PlanningPokerWeb.AuthController do
     end
   end
 
+  def test_sign_in_user(conn, %{"email" => email}) do
+    if Mix.env != :test do
+      raise "Email Signin only enabled in test mode"
+    end
+
+    case PlanningPoker.Accounts.user_by_email(email) do
+      nil ->
+        conn
+        |> put_status(401)
+        |> render(PlanningPokerWeb.ErrorView, "401.json-api")
+      user ->
+        conn
+        |> PlanningPoker.Guardian.Plug.sign_in(user)
+        |> redirect(to: "/")
+    end
+  end
+
   def sign_in_user(conn, %{"user" => oauth_user}) do
     # try to get exactly one user from the db whose email matches
     # that of the login request
     user = PlanningPoker.Accounts.user_by_email(oauth_user.email)
 
     if user do
-      IO.puts("found user")
-
       cond do
         true ->
           conn
@@ -52,9 +67,6 @@ defmodule PlanningPokerWeb.AuthController do
           |> redirect(to: "/")
 
         false ->
-          # not successful
-          IO.puts("uuuh false")
-
           conn
           |> put_status(401)
           |> render(PlanningPokerWeb.ErrorView, "401.json-api")

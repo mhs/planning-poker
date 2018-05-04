@@ -61,6 +61,9 @@ defmodule PlanningPokerWeb.Router do
   scope "/api/v1/auth", PlanningPokerWeb do
     pipe_through(:browser)
 
+    # Used in testing
+    post("/test_sign_in", AuthController, :test_sign_in_user)
+
     get("/:provider", AuthController, :request)
     get("/:provider/callback", AuthController, :callback)
     post("/:provider/callback", AuthController, :callback)

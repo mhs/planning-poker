@@ -1,5 +1,14 @@
 <%= if @maybe_user == nil do %>
-    <span><%= link "Login with Google", to: auth_path(@conn, :request, "google") %></span>
+  <span>
+    <%= link "Login with Google", to: auth_path(@conn, :request, "google") %>
+  </span>
+
+  <%= if Mix.env == :test do %>
+    <%= form_for @conn, auth_path(@conn, :test_sign_in_user), fn f -> %>
+      <%= text_input f, :email %>
+      <%= submit "Done" %>
+    <% end %>
+  <% end %>
 <% else %>
     <h3>Hi <%= @maybe_user.email %>!</h3>
     <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
