@@ -4,7 +4,9 @@ use Mix.Config
 # you can enable the server option below.
 config :planning_poker, PlanningPokerWeb.Endpoint,
   http: [port: 4001],
-  server: false
+  server: true
+
+config :planning_poker, sql_sandbox: true
 
 # Print only warnings and errors during test
 config :logger, level: :warn
