@@ -49,7 +49,8 @@ defmodule PlanningPoker.Mixfile do
       {:guardian, "~> 1.0"},
       {:ex_machina, "~> 2.1", only: :test},
       {:hound, "~> 1.0"},
-      {:dialyxir, "~> 1.0.0-rc.2", only: [:dev], runtime: false}
+      {:dialyxir, "~> 1.0.0-rc.2", only: [:dev], runtime: false},
+      {:httpoison, "~> 1.0"}
     ]
   end
 
