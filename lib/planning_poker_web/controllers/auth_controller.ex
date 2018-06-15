@@ -22,23 +22,18 @@ defmodule PlanningPokerWeb.AuthController do
     # from the oauth provider
     conn
     |> put_status(401)
-    |> render(PlanningPokerWeb.ErrorView, "401.json-api")
+    |> render(PlanningPokerWeb.ErrorView, "401.json-api", %{})
   end
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, _params) do
     case User.basic_info(auth) do
       {:ok, user} ->
         sign_in_user(conn, %{"user" => user})
-
-      {:error, _} ->
-        conn
-        |> put_status(401)
-        |> render(PlanningPokerWeb.ErrorView, "401.json-api")
     end
   end
 
   def test_sign_in_user(conn, %{"email" => email}) do
-    if Mix.env != :test do
+    if Mix.env() != :test do
       raise "Email Signin only enabled in test mode"
     end
 
@@ -46,7 +41,8 @@ defmodule PlanningPokerWeb.AuthController do
       nil ->
         conn
         |> put_status(401)
-        |> render(PlanningPokerWeb.ErrorView, "401.json-api")
+        |> render(PlanningPokerWeb.ErrorView, "401.json-api", %{})
+
       user ->
         conn
         |> PlanningPoker.Guardian.Plug.sign_in(user)
@@ -60,17 +56,9 @@ defmodule PlanningPokerWeb.AuthController do
     user = PlanningPoker.Accounts.user_by_email(oauth_user.email)
 
     if user do
-      cond do
-        true ->
-          conn
-          |> PlanningPoker.Guardian.Plug.sign_in(user)
-          |> redirect(to: "/")
-
-        false ->
-          conn
-          |> put_status(401)
-          |> render(PlanningPokerWeb.ErrorView, "401.json-api")
-      end
+      conn
+      |> PlanningPoker.Guardian.Plug.sign_in(user)
+      |> redirect(to: "/")
     else
       sign_up_user(conn, %{"user" => oauth_user})
     end
@@ -95,31 +83,31 @@ defmodule PlanningPokerWeb.AuthController do
       {:error, _} ->
         conn
         |> put_status(422)
-        |> render(PlanningPokerWeb.ErrorView, "422.json-api")
+        |> render(PlanningPokerWeb.ErrorView, "422.json-api", %{})
     end
   end
 
   def unauthenticated(conn, _) do
     conn
     |> put_status(401)
-    |> render(PlanningPokerWeb.ErrorView, "401.json-api")
+    |> render(PlanningPokerWeb.ErrorView, "401.json-api", %{})
   end
 
   def unauthorized(conn, _) do
     conn
     |> put_status(403)
-    |> render(PlanningPokerWeb.ErrorView, "403.json-api")
+    |> render(PlanningPokerWeb.ErrorView, "403.json-api", %{})
   end
 
   def already_authenticated(conn, _) do
     conn
     |> put_status(200)
-    |> render(PlanningPokerWeb.ErrorView, "200.json-api")
+    |> render(PlanningPokerWeb.ErrorView, "200.json-api", %{})
   end
 
   def no_resource(conn, _) do
     conn
     |> put_status(404)
-    |> render(PlanningPokerWeb.ErrorView, "404.json-api")
+    |> render(PlanningPokerWeb.ErrorView, "404.json-api", %{})
   end
 end

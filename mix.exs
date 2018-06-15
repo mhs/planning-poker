@@ -6,11 +6,13 @@ defmodule PlanningPoker.Mixfile do
       app: :planning_poker,
       version: "0.0.1",
       elixir: "~> 1.4",
+      dialyzer: [plt_add_deps: :transitive],
       elixirc_paths: elixirc_paths(Mix.env),
       compilers: [:phoenix, :gettext] ++ Mix.compilers,
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
       deps: deps()
+
     ]
   end
 
@@ -47,6 +49,7 @@ defmodule PlanningPoker.Mixfile do
       {:guardian, "~> 1.0"},
       {:ex_machina, "~> 2.1", only: :test},
       {:hound, "~> 1.0"},
+      {:dialyxir, "~> 1.0.0-rc.2", only: [:dev], runtime: false}
     ]
   end
 
