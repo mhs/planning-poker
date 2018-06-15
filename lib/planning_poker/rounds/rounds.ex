@@ -50,7 +50,7 @@ defmodule PlanningPoker.Rounds do
     (from e in Ecto.assoc(round, :estimates), preload: :user) |> Repo.all()
   end
 
-  defp create_round(attrs \\ %{}) do
+  defp create_round(attrs) do
     %Round{}
     |> Round.changeset(attrs)
     |> Repo.insert()

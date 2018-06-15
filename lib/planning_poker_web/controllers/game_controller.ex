@@ -3,7 +3,7 @@ defmodule PlanningPokerWeb.GameController do
 
   alias PlanningPoker.Games
   alias PlanningPoker.Rounds
-  alias PlanningPoker.Games.{Game, Round}
+  alias PlanningPoker.Games.{Game}
 
   def index(conn, _params) do
     games = Games.list_games()
@@ -49,7 +49,7 @@ defmodule PlanningPokerWeb.GameController do
         |> put_flash(:info, "Round closed!")
         |> redirect(to: game_path(conn, :show, game_id))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, %Ecto.Changeset{} = _changeset} ->
         conn
         |> put_flash(:error, "There was a problem closing the round")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -92,7 +92,7 @@ defmodule PlanningPokerWeb.GameController do
     end)
   end
 
-  defp refresh_estimates(game_id, round, players) do
+  defp refresh_estimates(game_id, round, _players) do
     Task.async(fn ->
       new_info =
         Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
@@ -151,16 +151,16 @@ defmodule PlanningPokerWeb.GameController do
     current_user = Guardian.Plug.current_resource(conn)
     round = Rounds.get_round!(round_id)
     game = Games.get_game!(game_id)
-    players = Games.get_players(game)
+    _players = Games.get_players(game)
 
     case Rounds.set_estimate(round, current_user, amount) do
-      {:ok, estimate} ->
+      {:ok, _estimate} ->
         refresh_game_page(game_id)
 
         conn
         |> redirect(to: game_path(conn, :show, game_id))
 
-      {:error, c} ->
+      {:error, _} ->
         conn
         |> redirect(to: game_path(conn, :show, game_id))
     end
