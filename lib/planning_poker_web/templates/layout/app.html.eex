@@ -10,12 +10,16 @@
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
     <title>Hello PlanningPoker!</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/assets/css/app.css") %>">
   </head>
 
   <body>
     <script>window.userToken = "<%= assigns[:user_token] %>"</script>
     <div class="container">
+      <%= if @current_user != nil do %>
+        <h3>Hi <%= @current_user.email %>!</h3>
+        <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
+      <% end %>
       <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
       <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 

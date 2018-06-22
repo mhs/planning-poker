@@ -3,6 +3,7 @@ defmodule PlanningPokerWeb.Router do
 
   pipeline :auth do
     plug(PlanningPoker.Accounts.Pipeline)
+    plug(PlanningPoker.CurrentUser)
   end
 
   pipeline :ensure_auth do

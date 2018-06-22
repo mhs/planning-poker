@@ -8,17 +8,14 @@
       <%= submit "Done" %>
     <% end %>
 <% else %>
-    <h3>Hi <%= @maybe_user.email %>!</h3>
-    <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
-
-    <h2>Games</h2>
-    <ul>
-      <%=  for game <- @games do %>
-        <li>
-          <%=  link game.name, to: game_path(@conn, :show, game) %>
-        </li>
-      <% end %>
-    </ul>
-    <span><%= link "Start a game", to: game_path(@conn, :new) %><span>
+  <h2>Games</h2>
+  <ul>
+    <%=  for game <- @games do %>
+      <li>
+        <%=  link game.name, to: game_path(@conn, :show, game) %>
+      </li>
+    <% end %>
+  </ul>
+  <span><%= link "Start a game", to: game_path(@conn, :new) %><span>
 <% end %>
 
