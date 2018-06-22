@@ -33,8 +33,11 @@ defmodule PlanningPokerWeb.AuthController do
   end
 
   def test_sign_in_user(conn, %{"email" => email}) do
-    if Mix.env() != :test  || Mix.env() != :development do
-      raise "Email Signin only enabled in test and dev mode"
+    case Mix.env() do
+      :test -> nil
+      :dev -> nil
+      _ -> raise "Email Signin only enabled in test and dev mode, not #{Mix.env()}"
+
     end
 
     case PlanningPoker.Accounts.user_by_email(email) do
