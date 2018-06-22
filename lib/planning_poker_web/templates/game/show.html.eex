@@ -50,7 +50,7 @@
       <%= hidden_input f, :round_id %>
       <%= select f, :amount, ~w(1 2 3 5 8 13 pass) %>
       <div class="form-group">
-        <%= submit "Submit", class: "btn btn-primary" %>
+        <%= submit "Submit", class: "button is-primary" %>
       </div>
     <% end %>
   <% end %>

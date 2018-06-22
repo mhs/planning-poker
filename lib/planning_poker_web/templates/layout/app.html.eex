@@ -10,23 +10,41 @@
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
     <title>Hello PlanningPoker!</title>
-    <link rel="stylesheet" href="<%= static_path(@conn, "/assets/css/app.css") %>">
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
     <script>window.userToken = "<%= assigns[:user_token] %>"</script>
-    <div class="container">
-      <%= if @current_user != nil do %>
-        <h3>Hi <%= @current_user.email %>!</h3>
-        <span><%= link "Logout", to: page_path(@conn, :logout), method: :post %></span>
-      <% end %>
-      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 
-      <main role="main">
-        <%= render @view_module, @view_template, assigns %>
-      </main>
 
-    </div> <!-- /container -->
+      <nav class="navbar">
+        <div class="navbar-brand">
+          <h2 class="navbar-item">Planning Poker</h2>
+        </div>
+        
+        <div class="navbar-menu">
+          <%= if @current_user != nil do %>
+              <div class="navbar-start"></div>
+              <div class="navbar-end">
+                <h3 class="navbar-item">Hi <%= @current_user.email %>!</h3>
+                <span class="navbar-item">
+                  <%= link "Logout", to: page_path(@conn, :logout), method: :post, class: "button is-link"%>
+                </span>
+              </div>
+          <% end %>
+        </div>
+      </nav>
+    </div>
+    <section>
+      <div class="container">
+        <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+        <main role="main">
+          <%= render @view_module, @view_template, assigns %>
+        </main>
+
+      </div> <!-- /container -->
+    </section>
   </body>
 </html>
