@@ -21,6 +21,7 @@ defmodule PlanningPoker.Rounds do
 
   def next_round(game_id) do
     players = Games.get_players(game_id)
+
     Repo.transaction(fn ->
       from(r in Round, where: [game_id: ^game_id, status: "open"])
       |> Repo.update_all(set: [status: "closed"])
@@ -47,7 +48,7 @@ defmodule PlanningPoker.Rounds do
   def estimates(nil), do: []
 
   def estimates(round = %Round{}) do
-    (from e in Ecto.assoc(round, :estimates), preload: :user) |> Repo.all()
+    from(e in Ecto.assoc(round, :estimates), preload: :user) |> Repo.all()
   end
 
   defp create_round(attrs) do
@@ -66,21 +67,30 @@ defmodule PlanningPoker.Rounds do
   def current_estimate(nil, _), do: nil
 
   def current_estimate(round, user) do
-    q = Ecto.Query.from e in Estimate,
-      join: g in assoc(e, :game_player),
-      join: u in assoc(g, :user),
-      where: u.id == ^user.id,
-      where: e.round_id == ^round.id
+    estimate =
+      Ecto.Query.from(
+        e in Estimate,
+        join: g in assoc(e, :game_player),
+        join: u in assoc(g, :user),
+        where: u.id == ^user.id,
+        where: e.round_id == ^round.id
+      )
 
+    case estimate |> Repo.one() do
+      %Estimate{} = e ->
+        e
 
-    case q |> Repo.one do
       nil ->
-        game_player = Ecto.assoc(user, :game_players)
-        |> where([p], p.game_id == ^round.game_id)
-        |> Repo.one
+        player = Ecto.assoc(user, :game_players)
+          |> where([p], p.game_id == ^round.game_id)
+          |> Repo.one()
 
-        %Estimate{round_id: round.id, game_player_id: game_player.id}
-      %Estimate{} = e -> e
+        case player do
+          %GamePlayer{id: id}  ->
+            %Estimate{round_id: round.id, game_player_id: id}
+
+          _ -> nil
+        end
     end
   end
 end
