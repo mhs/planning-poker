@@ -1,28 +1,26 @@
-<h2 id="game-page" data-game-id=<%= @game.id %>>Show Game</h2>
 
-<ul>
-
-  <li>
-    <strong>Name:</strong>
-    <%= @game.name %>
-  </li>
-
-  <li>
-    <strong>Status:</strong>
-    <%= @game.status %>
-  </li>
-
-</ul>
-
-<%= if Enum.member?(@players, @current_user) do %>
-  <span><%= link "Leave Game", to: game_leave_path(@conn, :leave, @game), method: :post %></span>
-<% else %>
-  <span><%= link "Join Game", to: game_join_path(@conn, :join, @game), method: :post %></span>
-<% end %>
-
-<h2>People in this game</h2>
-<div id="players" data-controller="players" data-game-id=<%= @game.id %> >
-  <%= render "players.html", players: @players %>
+<div class="level">
+  <div class="level-left">
+    <div class="level-item">
+      <div>
+        <h1 class="title is-spaced">
+          <%= @game.name %>
+        </h1>
+        <h3 class="subtitle">
+            (<%= @game.status %>)
+        </h3>
+      </div>
+    </div>
+    <div class="level-item">
+      <div class="column">
+        <%= if Enum.member?(@players, @current_user) do %>
+          <span><%= link "Leave Game", to: game_leave_path(@conn, :leave, @game), method: :post %></span>
+        <% else %>
+          <span><%= link "Join Game", to: game_join_path(@conn, :join, @game), method: :post %></span>
+        <% end %>
+      </div>
+    </div>
+  </div>
 </div>
 
 <%= if @current_round == nil || @current_round.status == "closed" do %>
@@ -32,28 +30,46 @@
 <% end %>
 
 <%= if @current_round do %>
-  <p>The current round is <%= @current_round.id %></p>
-  <%= if @current_round.status == "open" do %>
-    <span><%= link "Close Round", to: game_close_round_path(@conn, :close_round, @game), method: :post %></span>
-  <% end %>
-
-  <div id="estimates"
-       data-controller="estimates"
-       data-game-id=<%= @game.id %>>
-    <%= render "estimates.html", estimates: @estimates, round: @current_round %>
+  <div class="level">
+    <div class="level-left">
+      <h1 class="title is-4">
+        Round <%= @current_round.id %>
+      </h1>
+    </div>
+    <div class="level-right">
+      <div class="level-item">
+        <%= if @current_round.status == "open" do %>
+          <span><%= link "Close Round", to: game_close_round_path(@conn, :close_round, @game), method: :post %></span>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-
-  <%= if Enum.member?(@players, @current_user) do %>
-    <h3>My estimate</h3>
-    <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>
-      <%= hidden_input f, :round_id %>
-      <%= select f, :amount, ~w(1 2 3 5 8 13 pass) %>
-      <div class="form-group">
-        <%= submit "Submit", class: "button is-primary" %>
+  <div class="columns">
+    <div class="column">
+      <div id="estimates"
+          data-controller="estimates"
+          data-game-id=<%= @game.id %>>
+        <%= render "estimates.html", estimates: @estimates, round: @current_round %>
       </div>
-    <% end %>
-  <% end %>
+    </div>
+    <div class="column">
+      <%= if Enum.member?(@players, @current_user) do %>
+        <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>
+          <%= hidden_input f, :round_id %>
+          <div class="field">
+            <label for="" class="label">My Estimate</label>
+            <div class="select">
+              <%= select f, :amount, ~w(1 2 3 5 8 13 pass) %>
+            </div>
+          </div>
+          <div class="field">
+            <%= submit "Submit", class: "button is-primary" %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
 <% end %>
 
 <span><%= link "Edit", to: game_path(@conn, :edit, @game) %></span>
