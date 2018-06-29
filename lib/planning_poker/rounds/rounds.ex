@@ -1,7 +1,6 @@
 # The Rounds context
 defmodule PlanningPoker.Rounds do
   alias PlanningPoker.Repo
-  alias PlanningPoker.Games
   alias PlanningPoker.Games.GamePlayer
   alias PlanningPoker.Rounds.{Estimate, Round}
   import Ecto.Query

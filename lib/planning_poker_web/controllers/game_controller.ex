@@ -30,6 +30,7 @@ defmodule PlanningPokerWeb.GameController do
   def new_round(conn, %{"game_id" => game_id}) do
     case Rounds.next_round(game_id) do
       {:ok, _round} ->
+        refresh_game_page(game_id)
         conn
         |> put_flash(:info, "Round created successfully.")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -45,6 +46,7 @@ defmodule PlanningPokerWeb.GameController do
 
     case Rounds.close_round(round) do
       {:ok, _round} ->
+        refresh_game_page(game_id)
         conn
         |> put_flash(:info, "Round closed!")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -78,18 +80,7 @@ defmodule PlanningPokerWeb.GameController do
     current_round = Games.current_round(game)
     players = Games.get_players(game)
 
-    refresh_players(game_id, players)
     refresh_estimates(game_id, current_round, players)
-  end
-
-  defp refresh_players(game_id, players) do
-    Task.async(fn ->
-      new_info = Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "players.html", %{players: players})
-
-      PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "players_updated", %{
-      players: new_info
-    })
-    end)
   end
 
   defp refresh_estimates(game_id, round, _players) do
