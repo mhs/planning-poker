@@ -7,6 +7,7 @@ defmodule PlanningPoker.Games.Game do
     field(:name, :string)
     field(:status, :string)
     has_many(:rounds, PlanningPoker.Rounds.Round)
+    has_many(:game_players, PlanningPoker.Games.GamePlayer)
     many_to_many(:players, PlanningPoker.Accounts.User, join_through: "game_players")
 
     timestamps()

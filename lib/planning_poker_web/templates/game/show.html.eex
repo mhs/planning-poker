@@ -50,7 +50,7 @@
       <div id="estimates"
           data-controller="estimates"
           data-game-id=<%= @game.id %>>
-        <%= render "estimates.html", estimates: @estimates, round: @current_round %>
+        <%= render "estimates.html", players: @players, estimates: @estimates, round: @current_round %>
       </div>
     </div>
     <div class="column">

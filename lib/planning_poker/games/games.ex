@@ -219,6 +219,7 @@ defmodule PlanningPoker.Games do
     Round.changeset(round, %{})
   end
 
+  @spec get_players(%Game{}) :: [%PlanningPoker.Accounts.User{}]
   def get_players(%Game{} = game) do
     game
     |> Ecto.assoc(:players)

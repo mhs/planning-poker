@@ -20,7 +20,7 @@ defmodule PlanningPoker.Rounds do
   end
 
   def next_round(game_id) do
-    players = Games.get_players(game_id)
+    players = from(p in GamePlayer, where: [game_id: ^game_id]) |> Repo.all()
 
     Repo.transaction(fn ->
       from(r in Round, where: [game_id: ^game_id, status: "open"])
@@ -31,9 +31,9 @@ defmodule PlanningPoker.Rounds do
 
       # make a new pending estimate for every player
       Enum.each(players, fn player ->
-        %{user_id: player.id, round_id: new_round.id}
+        %{game_player_id: player.id, round_id: new_round.id}
         |> Estimate.pending_estimate()
-        |> Repo.insert()
+        |> Repo.insert!()
       end)
     end)
   end

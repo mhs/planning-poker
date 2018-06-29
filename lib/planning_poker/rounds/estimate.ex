@@ -22,6 +22,7 @@ defmodule PlanningPoker.Rounds.Estimate do
     |> validate_inclusion(:amount, @valid_amounts)
   end
 
+  @spec pending_estimate(%{game_player_id: any(), round_id: any()}) :: any()
   def pending_estimate(attrs) do
     %Estimate{}
     |> cast(attrs, [:game_player_id, :round_id])
