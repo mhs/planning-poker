@@ -14,6 +14,10 @@ export default class extends Controller {
     this.gameChannel.on("estimates_updated", payload => {
       console.log("estimates updated!");
       this.element.innerHTML = payload.estimates;
+      const round = document.querySelector('[data-round-name]');
+      if (round) {
+        round.textContent = `Round ${payload.roundId}`;
+      }
       console.log(payload);
     });
     this.gameChannel

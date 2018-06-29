@@ -90,7 +90,8 @@ defmodule PlanningPokerWeb.GameController do
               estimates: Rounds.estimates(round),
               round: round})
 
-      PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", %{estimates: new_info})
+      payload = %{estimates: new_info, roundId: round.id}
+      PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", payload)
     end)
   end
 

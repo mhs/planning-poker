@@ -32,7 +32,7 @@
 <%= if @current_round do %>
   <div class="level">
     <div class="level-left">
-      <h1 class="title is-4">
+      <h1 class="title is-4" data-round-name>
         Round <%= @current_round.id %>
       </h1>
     </div>
