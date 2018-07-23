@@ -17,11 +17,11 @@ defmodule PlanningPokerWeb.PageController do
       end
 
     games =
-    if maybe_user != nil do
-      PlanningPoker.Repo.all(Ecto.assoc(maybe_user, :games))
-    else
-      []
-    end
+      if maybe_user != nil do
+        PlanningPoker.Repo.all(Ecto.assoc(maybe_user, :games))
+      else
+        []
+      end
 
     conn
     |> put_flash(:info, message)

@@ -6,12 +6,13 @@ defmodule PlanningPokerWeb.GameView do
     email = estimate.user.email
     pending = Estimate.pending?(estimate)
 
-    vote = case {status, pending} do
-      {"closed", true} -> "did not vote"
-      {"closed", false} -> "voted #{estimate.amount}"
-      {_ , true} -> "has not voted"
-      {_ , false} -> "has voted"
-    end
+    vote =
+      case {status, pending} do
+        {"closed", true} -> "did not vote"
+        {"closed", false} -> "voted #{estimate.amount}"
+        {_, true} -> "has not voted"
+        {_, false} -> "has voted"
+      end
 
     [email, " ", vote]
   end

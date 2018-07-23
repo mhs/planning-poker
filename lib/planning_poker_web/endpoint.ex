@@ -37,7 +37,7 @@ defmodule PlanningPokerWeb.Endpoint do
   plug(Plug.Head)
 
   if Application.get_env(:planning_poker, :sql_sandbox) do
-    plug Phoenix.Ecto.SQL.Sandbox
+    plug(Phoenix.Ecto.SQL.Sandbox)
   end
 
   # The session will be stored in the cookie and signed,

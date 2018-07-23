@@ -2,7 +2,7 @@ defmodule PlanningPokerWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  channel "game:*", PlanningPokerWeb.GameChannel
+  channel("game:*", PlanningPokerWeb.GameChannel)
 
   ## Transports
   transport(:websocket, Phoenix.Transports.WebSocket)

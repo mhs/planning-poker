@@ -62,6 +62,12 @@ defmodule PlanningPoker.Rounds do
     |> Repo.insert_or_update()
   end
 
+  def update_estimate(%{id: id, amount: amount}) do
+    Repo.get!(Estimate, id)
+    |> Estimate.changeset(%{amount: amount})
+    |> Repo.update()
+  end
+
   # Find or create the current user's estimate for the round
   def current_estimate(nil, _), do: nil
 
@@ -80,15 +86,17 @@ defmodule PlanningPoker.Rounds do
         e
 
       nil ->
-        player = Ecto.assoc(user, :game_players)
+        player =
+          Ecto.assoc(user, :game_players)
           |> where([p], p.game_id == ^round.game_id)
           |> Repo.one()
 
         case player do
-          %GamePlayer{id: id}  ->
+          %GamePlayer{id: id} ->
             %Estimate{round_id: round.id, game_player_id: id}
 
-          _ -> nil
+          _ ->
+            nil
         end
     end
   end

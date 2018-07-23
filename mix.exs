@@ -50,7 +50,10 @@ defmodule PlanningPoker.Mixfile do
       {:ex_machina, "~> 2.1", only: :test},
       {:hound, "~> 1.0"},
       {:dialyxir, "~> 1.0.0-rc.2", only: [:dev], runtime: false},
-      {:httpoison, "~> 1.0"}
+      {:httpoison, "~> 1.0"},
+      {:absinthe, "~> 1.4.0"},
+      {:absinthe_plug, "~> 1.4.0"},
+      {:dataloader, "~> 1.0.0"},
     ]
   end
 

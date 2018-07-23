@@ -10,6 +10,9 @@ defmodule PlanningPoker.Pivotal do
   end
 
   def get_story do
-    get("https://www.pivotaltracker.com/services/v5/projects/2130373/stories/158267859", headers(token()))
+    get(
+      "https://www.pivotaltracker.com/services/v5/projects/2130373/stories/158267859",
+      headers(token())
+    )
   end
 end

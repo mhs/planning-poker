@@ -20,12 +20,14 @@ defmodule PlanningPokerWeb.Router do
   end
 
   pipeline :api do
-    plug(:accepts, ["json", "json-api"])
-    plug(JaSerializer.Deserializer)
+    plug(:accepts, ["json"])
   end
 
-  scope "/api/v1", PlanningPokerWebApi do
+  scope "/api" do
     pipe_through([:api, :auth])
+
+    forward("/graphql", Absinthe.Plug, schema: PlanningPokerWeb.Schema)
+    forward("/graphiql", Absinthe.Plug.GraphiQL, schema: PlanningPokerWeb.Schema)
   end
 
   scope "/", PlanningPokerWeb do
@@ -78,6 +80,7 @@ defmodule PlanningPokerWeb.Router do
 
   def assign_token(conn, _) do
     token = PlanningPoker.Guardian.Plug.current_token(conn)
+
     conn
     |> assign(:user_token, token)
   end

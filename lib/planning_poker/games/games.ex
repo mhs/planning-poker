@@ -39,6 +39,7 @@ defmodule PlanningPoker.Games do
 
   """
   def get_game!(id), do: Repo.get!(Game, id)
+  def get_game(id), do: Repo.get(Game, id)
 
   @doc """
   Creates a game.
@@ -59,11 +60,12 @@ defmodule PlanningPoker.Games do
   end
 
   def create_game_with_round(attrs \\ %{}) do
-    with {:ok, game} <- %Game{}
-    |> Game.changeset(attrs)
-    |> Repo.insert(),
-    {:ok, round} <- Rounds.next_round(game.id),
-    do: {:ok, game}
+    with {:ok, game} <-
+           %Game{}
+           |> Game.changeset(attrs)
+           |> Repo.insert(),
+         {:ok, round} <- Rounds.next_round(game.id),
+         do: {:ok, game}
   end
 
   @doc """
@@ -230,9 +232,9 @@ defmodule PlanningPoker.Games do
 
   def join_game(game_id, %User{} = user) do
     Repo.transaction(fn ->
-      {:ok, game_player} = GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
-      |> Repo.insert()
-
+      {:ok, game_player} =
+        GamePlayer.changeset(%GamePlayer{}, %{game_id: game_id, user_id: user.id})
+        |> Repo.insert()
 
       round = game_id |> get_game!() |> current_round()
       Rounds.create_pending_estimate(round, game_player)
@@ -241,8 +243,9 @@ defmodule PlanningPoker.Games do
 
   def leave_game(game_id, user) do
     Repo.transaction(fn ->
-      (from g in GamePlayer, where: [game_id: ^game_id, user_id: ^user.id])
+      from(g in GamePlayer, where: [game_id: ^game_id, user_id: ^user.id])
       |> Repo.delete_all()
+
       # find estimates for all rounds for the user/game
     end)
   end

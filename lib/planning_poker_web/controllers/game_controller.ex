@@ -31,6 +31,7 @@ defmodule PlanningPokerWeb.GameController do
     case Rounds.next_round(game_id) do
       {:ok, _round} ->
         refresh_game_page(game_id)
+
         conn
         |> put_flash(:info, "Round created successfully.")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -47,6 +48,7 @@ defmodule PlanningPokerWeb.GameController do
     case Rounds.close_round(round) do
       {:ok, _round} ->
         refresh_game_page(game_id)
+
         conn
         |> put_flash(:info, "Round closed!")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -64,6 +66,7 @@ defmodule PlanningPokerWeb.GameController do
     case Games.join_game(game_id, current_user) do
       {:ok, _player} ->
         refresh_game_page(game_id)
+
         conn
         |> put_flash(:info, "You have joined the game")
         |> redirect(to: game_path(conn, :show, game_id))
@@ -87,8 +90,9 @@ defmodule PlanningPokerWeb.GameController do
     Task.async(fn ->
       new_info =
         Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
-              estimates: Rounds.estimates(round),
-              round: round})
+          estimates: Rounds.estimates(round),
+          round: round
+        })
 
       payload = %{estimates: new_info, roundId: round.id}
       PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", payload)
@@ -101,6 +105,7 @@ defmodule PlanningPokerWeb.GameController do
     case Games.leave_game(game_id, current_user) do
       {:ok, _player} ->
         refresh_game_page(game_id)
+
         conn
         |> put_flash(:info, "You have joined the game")
         |> redirect(to: game_path(conn, :show, game_id))
