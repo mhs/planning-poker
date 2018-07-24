@@ -49,5 +49,11 @@ defmodule PlanningPokerWeb.Schema do
       arg(:amount, :string)
       resolve(&PlanningPokerWeb.Resolvers.Rounds.update_estimate/3)
     end
+
+    @desc "Logs in a user by email"
+    field :login, type: :session do
+      arg(:email, non_null(:string))
+      resolve(&PlanningPokerWeb.Resolvers.Accounts.login_user/3)
+    end
   end
 end

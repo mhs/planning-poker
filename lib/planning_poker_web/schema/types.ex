@@ -47,4 +47,8 @@ defmodule PlanningPokerWeb.Schema.Types do
     field(:id, :id)
     field(:email, :string)
   end
+
+  object :session do
+    field(:token, :string)
+  end
 end

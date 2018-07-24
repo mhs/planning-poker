@@ -117,4 +117,11 @@ defmodule PlanningPoker.Accounts do
       {:error, "No user found with that email"}
     end
   end
+
+  def new_token_for_user(email) do
+    with {:ok, user} <- authenticate_user(email),
+    {:ok, token, _claims} <- PlanningPoker.Guardian.encode_and_sign(user) do
+      {:ok, %{token: token}}
+    end
+  end
 end
