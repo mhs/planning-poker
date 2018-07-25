@@ -50,6 +50,13 @@ defmodule PlanningPokerWeb.Schema do
       resolve(&PlanningPokerWeb.Resolvers.Rounds.update_estimate/3)
     end
 
+    @desc "Opens a round"
+    field :update_round, type: :round do
+      arg(:id, non_null(:id))
+      arg(:status, :string)
+      resolve(&PlanningPokerWeb.Resolvers.Rounds.update_round/3)
+    end
+
     @desc "Logs in a user by email"
     field :login, type: :session do
       arg(:email, non_null(:string))

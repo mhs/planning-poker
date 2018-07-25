@@ -50,6 +50,8 @@ defmodule PlanningPokerWeb.Endpoint do
     signing_salt: "APAaIBv4"
   )
 
+  plug(CORSPlug)
+
   plug(PlanningPokerWeb.Router)
 
   @doc """

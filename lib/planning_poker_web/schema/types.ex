@@ -14,9 +14,9 @@ defmodule PlanningPokerWeb.Schema.Types do
   # end
 
   object :game do
-    field(:id, :id)
-    field(:name, :string)
-    field(:status, :string)
+    field(:id, non_null(:id))
+    field(:name, non_null(:string))
+    field(:status, non_null(:string))
     # field :rounds, list_of(:round) do
     #   resolve fn game, _, _ ->
     #     rounds = game |> Ecto.assoc(:rounds) |> PlanningPoker.Repo.all
@@ -32,23 +32,23 @@ defmodule PlanningPokerWeb.Schema.Types do
 
   object :round do
     field(:id, :id)
-    field(:status, :string)
-    field(:game, :game)
+    field(:status, non_null(:string))
+    field(:game, non_null(:game))
     field(:estimates, list_of(:estimate), resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.Estimate))
   end
 
   object :estimate do
-    field(:id, :id)
+    field(:id, non_null(:id))
     field(:amount, :string)
-    field(:user, :user, resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.User))
+    field(:user, non_null(:user), resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.User))
   end
 
   object :user do
-    field(:id, :id)
-    field(:email, :string)
+    field(:id, non_null(:id))
+    field(:email, non_null(:string))
   end
 
   object :session do
-    field(:token, :string)
+    field(:token, non_null(:string))
   end
 end

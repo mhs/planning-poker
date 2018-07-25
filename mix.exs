@@ -54,6 +54,7 @@ defmodule PlanningPoker.Mixfile do
       {:absinthe, "~> 1.4.0"},
       {:absinthe_plug, "~> 1.4.0"},
       {:dataloader, "~> 1.0.0"},
+      {:cors_plug, "~> 1.5"},
     ]
   end
 
