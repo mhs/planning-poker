@@ -6,4 +6,10 @@ defmodule PlanningPokerWeb.Resolvers.Accounts do
   def login_user(_parent, %{email: email}, _resolution) do
     PlanningPoker.Accounts.new_token_for_user(email)
   end
+
+  def current_user(_parent, %{context: %{current_user: u}}, _resolution) do
+    {:ok, u}
+  end
+
+  def current_user(_parent, _args, _resolution), do: {:ok, nil}
 end
