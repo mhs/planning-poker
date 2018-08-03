@@ -25,6 +25,17 @@ defmodule PlanningPoker.Games do
   end
 
   @doc """
+  Returns a list of all open games for the given user
+  """
+  def my_games(user) do
+    Ecto.Query.from(
+      g in Game,
+      join: u in assoc(g, :players),
+      where: u.id == ^user.id
+    ) |> Repo.all
+  end
+
+  @doc """
   Gets a single game.
 
   Raises `Ecto.NoResultsError` if the Game does not exist.

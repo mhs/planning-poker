@@ -11,4 +11,12 @@ defmodule PlanningPokerWeb.Resolvers.Games do
 
     {:ok, PlanningPoker.Games.get_game(id)}
   end
+
+  def my_games(_parent, _args, %{context: %{current_user: user}}) do
+    {:ok, PlanningPoker.Games.my_games(user)}
+  end
+
+  def my_games(_parent, _args, _resolution) do
+    {:error, "Not logged in"}
+  end
 end

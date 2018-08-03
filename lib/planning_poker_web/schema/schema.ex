@@ -23,6 +23,11 @@ defmodule PlanningPokerWeb.Schema do
       resolve(&PlanningPokerWeb.Resolvers.Games.list_games/3)
     end
 
+    @desc "Get all games for the current user"
+    field :my_games, non_null(list_of(:game)) do
+      resolve(&PlanningPokerWeb.Resolvers.Games.my_games/3)
+    end
+
     @desc "Get a game"
     field :game, :game do
       arg :id, non_null(:id)
@@ -40,6 +45,11 @@ defmodule PlanningPokerWeb.Schema do
       arg :id, non_null(:id)
       resolve(&PlanningPokerWeb.Resolvers.Accounts.find_user/3)
     end
+
+    @desc "Gets the profile for the current user"
+    field :current_user, type: :user do
+      resolve(&PlanningPokerWeb.Resolvers.Accounts.current_user/3)
+    end
   end
 
   mutation do
@@ -54,11 +64,6 @@ defmodule PlanningPokerWeb.Schema do
     field :login, type: :session do
       arg(:email, non_null(:string))
       resolve(&PlanningPokerWeb.Resolvers.Accounts.login_user/3)
-    end
-
-    @desc "Gets the profile for the current user"
-    field :current_user, type: :user do
-      resolve(&PlanningPokerWeb.Resolvers.Accounts.current_user/3)
     end
   end
 end

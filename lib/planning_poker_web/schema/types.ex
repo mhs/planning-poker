@@ -17,17 +17,13 @@ defmodule PlanningPokerWeb.Schema.Types do
     field(:id, non_null(:id))
     field(:name, non_null(:string))
     field(:status, non_null(:string))
-    # field :rounds, list_of(:round) do
-    #   resolve fn game, _, _ ->
-    #     rounds = game |> Ecto.assoc(:rounds) |> PlanningPoker.Repo.all
-    #     {:ok, rounds}
-    #   end
-    field(:rounds, list_of(:round), resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.Round))
+    field(:rounds, non_null(list_of(:round)), resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.Round))
     field :current_round, :round do
       resolve  fn game, _, _ ->
         {:ok, PlanningPoker.Games.current_round(game)}
       end
     end
+    field(:players, list_of(:user), resolve: Absinthe.Resolution.Helpers.dataloader(DataSources.User))
   end
 
   object :round do
