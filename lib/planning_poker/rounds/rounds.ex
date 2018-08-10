@@ -13,10 +13,12 @@ defmodule PlanningPoker.Rounds do
     |> Repo.delete()
   end
 
-  def close_round(round) do
+  def close_round(round = %Round{}) do
     Round.changeset(round, %{status: "closed"})
     |> Repo.update()
   end
+
+  def close_round(id), do: Repo.get!(Round, id) |> close_round()
 
   def next_round(game_id) do
     players = from(p in GamePlayer, where: [game_id: ^game_id]) |> Repo.all()
@@ -34,6 +36,7 @@ defmodule PlanningPoker.Rounds do
         |> Estimate.pending_estimate()
         |> Repo.insert!()
       end)
+      new_round
     end)
   end
 
@@ -50,6 +53,7 @@ defmodule PlanningPoker.Rounds do
     from(e in Ecto.assoc(round, :estimates), preload: :user) |> Repo.all()
   end
 
+  @spec create_round(any()) :: {:ok, %Round{}}
   defp create_round(attrs) do
     %Round{}
     |> Round.changeset(attrs)
