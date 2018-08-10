@@ -252,7 +252,7 @@ defmodule PlanningPoker.Games do
     end)
   end
 
-  def leave_game(game_id, user) do
+  def leave_game(game_id, %User{} = user) do
     Repo.transaction(fn ->
       from(g in GamePlayer, where: [game_id: ^game_id, user_id: ^user.id])
       |> Repo.delete_all()

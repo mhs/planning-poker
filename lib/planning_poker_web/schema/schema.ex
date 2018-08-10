@@ -83,5 +83,33 @@ defmodule PlanningPokerWeb.Schema do
         PlanningPoker.Rounds.close_round(id)
       end)
     end
+
+    @desc "Join a game with the current user"
+    field :join_game, type: :game do
+      arg(:id, non_null(:id))
+      resolve(&PlanningPokerWeb.Resolvers.Games.join_game/3)
+    end
+
+    @desc "Leave a game with the current user"
+    field :leave_game, type: :game do
+      arg(:id, non_null(:id))
+      resolve(&PlanningPokerWeb.Resolvers.Games.leave_game/3)
+    end
+
+    @desc "Create a game"
+    field :create_game, type: :game do
+      arg(:name, non_null(:string))
+      resolve( fn _, %{name: name}, _ ->
+        PlanningPoker.Games.create_game(%{name: name, status: "open"})
+      end)
+    end
+
+    @desc "Delete a game"
+    field :delete_game, type: :game do
+      arg(:id, non_null(:id))
+      resolve( fn _, %{id: id}, _ ->
+        PlanningPoker.Games.get_game!(id) |> PlanningPoker.Games.delete_game()
+      end)
+    end
   end
 end

@@ -15,8 +15,18 @@ defmodule PlanningPokerWeb.Resolvers.Games do
   def my_games(_parent, _args, %{context: %{current_user: user}}) do
     {:ok, PlanningPoker.Games.my_games(user)}
   end
+  def my_games(_parent, _args, _resolution), do: {:error, "Not logged in"}
 
-  def my_games(_parent, _args, _resolution) do
-    {:error, "Not logged in"}
+  def join_game(_parent, %{id: id}, %{context: %{current_user: user}}) do
+    PlanningPoker.Games.join_game(id, user)
+    {:ok, PlanningPoker.Games.get_game!(id)}
   end
+  def join_game(_parent, _args, _resolution), do: {:error, "Not logged in"}
+
+  def leave_game(_parent, %{id: id}, %{context: %{current_user: user}}) do
+    PlanningPoker.Games.leave_game(id, user)
+    {:ok, PlanningPoker.Games.get_game!(id)}
+  end
+  def leave_game(_parent, _args, _resolution), do: {:error, "Not logged in"}
+
 end
