@@ -19,12 +19,12 @@ defmodule PlanningPokerWeb.Schema do
 
   query do
     @desc "Get all games"
-    field :games, list_of(:game) do
+    field :games, non_null(list_of(non_null(:game))) do
       resolve(&PlanningPokerWeb.Resolvers.Games.list_games/3)
     end
 
     @desc "Get all games for the current user"
-    field :my_games, non_null(list_of(:game)) do
+    field :my_games, non_null(list_of(non_null(:game))) do
       resolve(&PlanningPokerWeb.Resolvers.Games.my_games/3)
     end
 
