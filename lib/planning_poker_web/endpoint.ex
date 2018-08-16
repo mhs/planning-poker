@@ -68,4 +68,10 @@ defmodule PlanningPokerWeb.Endpoint do
       {:ok, config}
     end
   end
+
+  def log(conn, s) do
+    IO.puts("---plug #{s}")
+    IO.inspect(conn)
+    conn
+  end
 end
