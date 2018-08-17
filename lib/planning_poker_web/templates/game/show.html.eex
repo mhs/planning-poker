@@ -50,11 +50,11 @@
       <div id="estimates"
           data-controller="estimates"
           data-game-id=<%= @game.id %>>
-        <%= render "estimates.html", players: @players, estimates: @estimates, round: @current_round %>
+        <%= render "estimates.html", players: @players, estimates: @estimates, round: @current_round, current_user: @current_user %>
       </div>
     </div>
     <div class="column">
-      <%= if Enum.member?(@players, @current_user) do %>
+      <%= if Enum.member?(@players, @current_user) && @current_round.status == "open" do %>
         <%= form_for @my_estimate, game_estimate_path(@conn, :estimate, @game), fn f -> %>
           <%= hidden_input f, :round_id %>
           <div class="field">

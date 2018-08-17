@@ -88,13 +88,10 @@ defmodule PlanningPokerWeb.GameController do
 
   defp refresh_estimates(game_id, round, _players) do
     Task.async(fn ->
-      new_info =
-        Phoenix.View.render_to_string(PlanningPokerWeb.GameView, "estimates.html", %{
+      payload = %{
           estimates: Rounds.estimates(round),
           round: round
-        })
-
-      payload = %{estimates: new_info, roundId: round.id}
+      }
       PlanningPokerWeb.Endpoint.broadcast!("game:" <> game_id, "estimates_updated", payload)
     end)
   end

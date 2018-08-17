@@ -1,7 +1,7 @@
 <ul>
   <%= for estimate <- @estimates do %>
     <li class="<%= if(Estimate.pending?(estimate), do: "estimate tag is-light", else: "estimate tag is-success")%>">
-      <%= vote_string(@round, estimate) %>
+      <%= vote_string(@round, @current_user, estimate) %>
     </li>
   <% end %>
 </ul>
